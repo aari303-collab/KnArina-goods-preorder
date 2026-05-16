@@ -385,6 +385,9 @@ function confirmOrder() {
   const btn = document.getElementById('btnConfirm');
   btn.disabled = true;
   btn.textContent = "กำลังส่งออเดอร์...";
+  
+  // 🌟 เพิ่มบรรทัดนี้เพื่อดึงยอดเงินรวมไปแสดงในหน้าชำระเงินค่ะ
+  document.getElementById('thankYouTotal').textContent = '฿' + currentOrder.total.toLocaleString();
 
   fetch(API_URL, {
     method: "POST",
@@ -396,6 +399,8 @@ function confirmOrder() {
     showPage('thankPage');
   }).catch(() => {
     alert("ระบบออฟไลน์: บันทึกข้อมูลเรียบร้อยแล้ว");
+    btn.disabled = false;
+    btn.textContent = "Confirm & Place Order";
     showPage('thankPage');
   });
 }
