@@ -4,19 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🍪 Cookie Shop</title>
-<!-- เปลี่ยนฟอนต์ภาษาไทยตรงนี้ได้เลยค่ะ ตอนนี้ดึง Kanit และ Lora มาใช้ -->
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-/* ค่าเริ่มต้นสี (จะถูกเปลี่ยนตามที่คุณเบลล์ตั้งในแอดมิน) */
 :root { --cream:#fef9f0; --warm:#faecd8; --cookie:#c8873b; --dark:#2b1d0e; --mid:#6b4226; --light:#e8ddd0; --green:#3d6b4a; --red:#c0392b; }
 
-/* ตรงนี้ใช้ฟอนต์ Kanit เป็นหลัก */
 body { font-family:'Kanit', sans-serif; background:var(--cream); color:var(--dark); min-height:100vh; display:flex; flex-direction:column; background-attachment: fixed; background-size: cover; background-position: center; transition: background-color 0.3s, background-image 0.5s; }
 
 .page { display:none; flex: 1; }
 .page.active { display:block; }
-/* เพิ่มพื้นหลังโปร่งแสงให้กล่องเนื้อหาอ่านง่ายขึ้นเมื่อมีภาพพื้นหลัง */
 .container { max-width:560px; margin:20px auto; padding:30px 20px 50px; width: 100%; background: rgba(255,255,255,0.85); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); backdrop-filter: blur(5px); }
 .container-large { max-width:800px; margin:20px auto; padding:30px 20px 50px; width: 100%; background: rgba(255,255,255,0.95); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
@@ -55,7 +51,7 @@ input, textarea, select { width:100%; padding:12px; border:1.5px solid #e8ddd0; 
 input:focus, textarea:focus, select:focus { border-color:var(--cookie); background:#fff; }
 
 .btn { width:100%; padding:16px; border-radius:12px; font-family:'Kanit',sans-serif; font-weight:700; font-size:1.05rem; cursor:pointer; transition:0.2s; margin-bottom:10px; border:none; text-align:center; }
-.btn-primary { background:var(--cookie); color:#fff; } /* เปลี่ยนให้ปุ่มหลักใช้สีธีม */
+.btn-primary { background:var(--cookie); color:#fff; }
 .btn-primary:hover { filter:brightness(0.9); transform:translateY(-2px); }
 .btn-primary:disabled { background:#ccc; cursor:not-allowed; }
 .btn-secondary { background:none; color:var(--mid); border:1.5px solid var(--light); }
@@ -192,19 +188,24 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
       <div class="field"><label>ค่าจัดส่ง (฿)</label><input type="number" id="setShippingFee"></div>
     </div>
 
-    <!-- ส่วนอัปโหลดสีและภาพพื้นหลังที่เพิ่มมาใหม่ -->
+    <!-- 🌟 ส่วนอัปโหลดสีและภาพพื้นหลังที่อัปเกรดใหม่ 🌟 -->
     <div class="form-section">
-      <div class="section-label">Theme & Design</div>
+      <div class="section-label">Theme & Background Design</div>
       <div class="field">
         <label>Theme Color (คลิกเพื่อเลือกสี)</label>
         <input type="color" id="setThemeColor" style="height:50px; cursor:pointer;">
       </div>
       <div class="field">
-        <label>Background Image (อัปโหลดรูปพื้นหลัง)</label>
-        <img id="bgPreview" style="width:100%; max-height:200px; object-fit:cover; display:none; border-radius:10px; margin-bottom:10px; border:1px solid #ccc;">
-        <input type="file" accept="image/*" style="font-size: 0.8rem;" onchange="compressBgImage(event)">
+        <label>Background Image (อัปโหลด หรือ วางลิงก์เพื่อความคมชัด 100%)</label>
+        <img id="bgPreview" style="width:100%; max-height:200px; object-fit:cover; display:none; border-radius:10px; margin-bottom:10px; border:1px solid #ccc; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+        
+        <!-- ช่องใส่ลิงก์รูปภาพ -->
+        <input type="text" id="setBgImage" placeholder="วางลิงก์รูป (URL) ที่นี่ หรืออัปโหลดไฟล์ด้านล่าง" style="margin-bottom:8px;" oninput="updateBgPreview()">
+        
+        <!-- ปุ่มอัปโหลดแบบ WEBP 1920px -->
+        <input type="file" id="bgFileInput" accept="image/*" style="font-size: 0.8rem;" onchange="compressBgImage(event)">
+        
         <button class="btn btn-secondary btn-small" style="margin-top:10px;" onclick="clearBgImage()">🗑️ ลบรูปพื้นหลัง</button>
-        <input type="hidden" id="setBgImage">
       </div>
     </div>
 
@@ -222,6 +223,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
 
 <script>
 // ════════════════════════════════════════════════════════════
+// ⚠️ อย่าลืมใส่ API URL อันเดิมของคุณเบลล์ตรงนี้นะคะ!
 const API_URL = "https://script.google.com/macros/s/AKfycbwuDnms9rcXGIif9yoUMfs45FoVzXr2zG6-QPTPxarKFM2VPpkbXtOOCm7wHcPLfAh_/exec"; 
 const ADMIN_PIN = "admin8616";
 // ════════════════════════════════════════════════════════════
@@ -257,12 +259,10 @@ function applyShopSettings() {
   document.getElementById('uiShopName').textContent = SHOP_SETTINGS.shopName;
   document.getElementById('uiShopDesc').textContent = SHOP_SETTINGS.shopDesc;
   
-  // เปลี่ยนสีธีมของเว็บ
   if(SHOP_SETTINGS.themeColor) {
     document.documentElement.style.setProperty('--cookie', SHOP_SETTINGS.themeColor);
   }
   
-  // โหลดรูปพื้นหลัง
   if (SHOP_SETTINGS.bgImage) {
     document.body.style.backgroundImage = `url(${SHOP_SETTINGS.bgImage})`;
   } else {
@@ -297,7 +297,6 @@ function renderMenu() {
     </div>`;
   }).join('');
   
-  // Re-apply selected state based on cart
   Object.keys(cart).forEach(id => {
     const row = document.getElementById('row-'+id);
     if(row) row.classList.add('selected');
@@ -316,11 +315,9 @@ function toggleItem(id) {
   }
 }
 
-// 💡 อัปเดตฟังก์ชันเปลี่ยนจำนวน: ถ้ากดลงไปที่ 0 จะเคลียร์ออกจากตะกร้า
 function changeQty(id, delta) {
   if (!cart[id]) return;
   cart[id] += delta;
-  
   if (cart[id] <= 0) {
     delete cart[id];
     document.getElementById('row-'+id).classList.remove('selected');
@@ -445,12 +442,12 @@ function loadAdminData() {
       document.getElementById('setShopName').value = SHOP_SETTINGS.shopName;
       document.getElementById('setShopDesc').value = SHOP_SETTINGS.shopDesc;
       document.getElementById('setShippingFee').value = SHOP_SETTINGS.shippingFee || 0;
-      
-      // ดึงค่าสีและภาพพื้นหลัง
       document.getElementById('setThemeColor').value = SHOP_SETTINGS.themeColor || "#c8873b";
-      document.getElementById('setBgImage').value = SHOP_SETTINGS.bgImage || "";
-      if(SHOP_SETTINGS.bgImage) {
-        document.getElementById('bgPreview').src = SHOP_SETTINGS.bgImage;
+      
+      const savedBg = SHOP_SETTINGS.bgImage || "";
+      document.getElementById('setBgImage').value = savedBg;
+      if(savedBg) {
+        document.getElementById('bgPreview').src = savedBg;
         document.getElementById('bgPreview').style.display = 'block';
       } else {
         document.getElementById('bgPreview').style.display = 'none';
@@ -460,24 +457,46 @@ function loadAdminData() {
     });
 }
 
+// 🌟 พรีวิวรูปพื้นหลังทันทีเมื่อพิมพ์ลิงก์
+function updateBgPreview() {
+  const val = document.getElementById('setBgImage').value;
+  if(val) {
+      document.getElementById('bgPreview').src = val;
+      document.getElementById('bgPreview').style.display = 'block';
+  } else {
+      document.getElementById('bgPreview').style.display = 'none';
+  }
+}
+
+// 🌟 ระบบย่อรูปภาพพื้นหลังใหม่ (1920px WEBP 85%)
 function compressBgImage(event) {
   const file = event.target.files[0];
   if(!file) return;
+  
+  document.getElementById('bgPreview').style.display = 'none'; // ซ่อนรูปเดิมก่อน
+  
   const reader = new FileReader();
   reader.onload = function(e) {
     const img = new Image();
     img.onload = function() {
       const canvas = document.createElement('canvas');
-      const MAX_WIDTH = 1200; // ขนาดพื้นหลังให้ใหญ่ขึ้นหน่อย
-      const scaleSize = MAX_WIDTH / img.width;
-      canvas.width = MAX_WIDTH;
+      const MAX_WIDTH = 1920; // 🌟 ขยายเพื่อรองรับจอ Full HD
+      let scaleSize = 1;
+      if (img.width > MAX_WIDTH) {
+          scaleSize = MAX_WIDTH / img.width;
+      }
+      canvas.width = img.width * scaleSize;
       canvas.height = img.height * scaleSize;
+      
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.6); // ย่อขนาดไฟล์
+      
+      // 🌟 ใช้ WEBP ช่วยคงความคมชัด แต่ไฟล์เบากว่า JPEG เดิมมาก
+      const dataUrl = canvas.toDataURL('image/webp', 0.85);
+      
       document.getElementById('bgPreview').src = dataUrl;
       document.getElementById('bgPreview').style.display = 'block';
-      document.getElementById('setBgImage').value = dataUrl;
+      document.getElementById('setBgImage').value = dataUrl; // นำไปใส่ในช่อง Text
     }
     img.src = e.target.result;
   }
@@ -487,6 +506,7 @@ function compressBgImage(event) {
 function clearBgImage() {
   document.getElementById('bgPreview').style.display = 'none';
   document.getElementById('setBgImage').value = '';
+  document.getElementById('bgFileInput').value = '';
 }
 
 function renderMenuEditor() {
@@ -522,13 +542,13 @@ function compressAndPreview(event, index) {
     const img = new Image();
     img.onload = function() {
       const canvas = document.createElement('canvas');
-      const MAX_WIDTH = 200;
+      const MAX_WIDTH = 400; // เพิ่มขนาดรูปเมนูคุกกี้ให้ชัดขึ้นเล็กน้อย
       const scaleSize = MAX_WIDTH / img.width;
       canvas.width = MAX_WIDTH;
       canvas.height = img.height * scaleSize;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+      const dataUrl = canvas.toDataURL('image/webp', 0.85); // ใช้ Webp เหมือนกัน
       document.getElementById('preview-' + index).src = dataUrl;
       document.getElementById('b64-' + index).value = dataUrl;
     }
