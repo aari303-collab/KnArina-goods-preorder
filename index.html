@@ -4,71 +4,69 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🍪 Cookie Shop</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- เปลี่ยนฟอนต์ภาษาไทยตรงนี้ได้เลยค่ะ ตอนนี้ดึง Kanit และ Lora มาใช้ -->
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-:root { --cream:#fef9f0; --warm:#faecd8; --cookie:#c8873b; --dark:#2b1d0e; --mid:#6b4226; --light:#f0dfc0; --green:#3d6b4a; --red:#c0392b; }
-body { font-family:'Nunito',sans-serif; background:var(--cream); color:var(--dark); min-height:100vh; display:flex; flex-direction:column; }
+/* ค่าเริ่มต้นสี (จะถูกเปลี่ยนตามที่คุณเบลล์ตั้งในแอดมิน) */
+:root { --cream:#fef9f0; --warm:#faecd8; --cookie:#c8873b; --dark:#2b1d0e; --mid:#6b4226; --light:#e8ddd0; --green:#3d6b4a; --red:#c0392b; }
+
+/* ตรงนี้ใช้ฟอนต์ Kanit เป็นหลัก */
+body { font-family:'Kanit', sans-serif; background:var(--cream); color:var(--dark); min-height:100vh; display:flex; flex-direction:column; background-attachment: fixed; background-size: cover; background-position: center; transition: background-color 0.3s, background-image 0.5s; }
 
 .page { display:none; flex: 1; }
 .page.active { display:block; }
-.container { max-width:560px; margin:0 auto; padding:40px 20px 60px; width: 100%; }
-.container-large { max-width:800px; margin:0 auto; padding:30px 20px 60px; width: 100%; }
+/* เพิ่มพื้นหลังโปร่งแสงให้กล่องเนื้อหาอ่านง่ายขึ้นเมื่อมีภาพพื้นหลัง */
+.container { max-width:560px; margin:20px auto; padding:30px 20px 50px; width: 100%; background: rgba(255,255,255,0.85); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); backdrop-filter: blur(5px); }
+.container-large { max-width:800px; margin:20px auto; padding:30px 20px 50px; width: 100%; background: rgba(255,255,255,0.95); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
-/* LOADING */
 #loadingScreen { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--cream); z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; }
 .spinner { font-size:3rem; animation:spin 1.5s linear infinite; margin-bottom:15px; }
 @keyframes spin { 100% { transform:rotate(360deg); } }
 
-/* HEADER */
 .header { text-align:center; margin-bottom:30px; animation:fadeUp 0.5s ease both; }
-.header h1 { font-family:'Lora',serif; font-size:2.2rem; line-height:1.2; margin-bottom:10px; }
+.header h1 { font-family:'Lora', serif; font-size:2.2rem; line-height:1.2; margin-bottom:10px; }
 .header h1 em { font-style:italic; color:var(--cookie); }
-.header p { font-size:0.9rem; color:var(--mid); line-height:1.6; white-space:pre-wrap; }
-.section-label { font-size:0.75rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--cookie); margin-bottom:12px; }
+.header p { font-size:0.95rem; color:var(--mid); line-height:1.6; white-space:pre-wrap; }
+.section-label { font-size:0.8rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--cookie); margin-bottom:12px; }
 
 #closedBanner { display:none; background:var(--warm); color:var(--red); border:1.5px dashed var(--red); padding:20px; border-radius:14px; text-align:center; margin-bottom:20px; font-weight:600; }
 
-/* MENU ITEMS WITH IMAGE */
 .items-list { display:flex; flex-direction:column; gap:12px; margin-bottom:28px; }
 .item-row { background:#fff; border:1.5px solid var(--light); border-radius:16px; padding:12px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:all 0.2s; animation:fadeUp 0.4s ease both; }
 .item-row:hover { border-color:var(--cookie); }
-.item-row.selected { border-color:var(--cookie); background:#fffbf5; box-shadow:0 2px 12px rgba(200,135,59,0.12); }
-.item-img { width:75px; height:75px; object-fit:cover; border-radius:12px; flex-shrink:0; background:var(--warm); display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#d4c4b2; }
+.item-row.selected { border-color:var(--cookie); background:#fffbf5; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+.item-img { width:75px; height:75px; object-fit:cover; border-radius:12px; flex-shrink:0; background:var(--warm); display:flex; align-items:center; justify-content:center; font-size:1.5rem; }
 .item-info { flex:1; }
-.item-info strong { display:block; font-size:0.95rem; font-weight:700; margin-bottom:3px; }
-.item-info span { font-size:0.8rem; color:var(--mid); line-height:1.3; display:block; }
-.item-price { font-weight:700; color:var(--cookie); font-size:0.95rem; }
+.item-info strong { display:block; font-size:1rem; font-weight:700; margin-bottom:3px; }
+.item-info span { font-size:0.85rem; color:var(--mid); line-height:1.3; display:block; }
+.item-price { font-weight:700; color:var(--cookie); font-size:1rem; }
 
 .qty-wrap { display:none; align-items:center; gap:8px; margin-top:8px; }
 .item-row.selected .qty-wrap { display:flex; }
 .qbtn { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--cookie); background:none; color:var(--cookie); font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 .qbtn:hover { background:var(--cookie); color:#fff; }
-.qnum { min-width:20px; text-align:center; font-weight:700; font-size:0.95rem; }
+.qnum { min-width:20px; text-align:center; font-weight:700; font-size:1rem; }
 
 .form-section { background:#fff; border-radius:20px; padding:24px 20px; margin-bottom:18px; border:1.5px solid var(--light); animation:fadeUp 0.5s ease 0.2s both; }
 .field { margin-bottom:16px; }
-.field label { display:block; font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--mid); margin-bottom:6px; }
-input, textarea, select { width:100%; padding:12px; border:1.5px solid #e8ddd0; border-radius:10px; font-family:'Nunito',sans-serif; font-size:0.95rem; background:var(--cream); outline:none; transition:0.2s; }
+.field label { display:block; font-size:0.8rem; font-weight:700; color:var(--mid); margin-bottom:6px; }
+input, textarea, select { width:100%; padding:12px; border:1.5px solid #e8ddd0; border-radius:10px; font-family:'Kanit',sans-serif; font-size:0.95rem; background:var(--cream); outline:none; transition:0.2s; }
 input:focus, textarea:focus, select:focus { border-color:var(--cookie); background:#fff; }
-textarea { resize:vertical; min-height:80px; }
 
-/* BUTTONS */
-.btn { width:100%; padding:16px; border-radius:12px; font-family:'Nunito',sans-serif; font-weight:700; font-size:1.05rem; cursor:pointer; transition:0.2s; margin-bottom:10px; border:none; text-align:center; }
-.btn-primary { background:var(--dark); color:#fff; }
-.btn-primary:hover { background:var(--cookie); transform:translateY(-2px); }
+.btn { width:100%; padding:16px; border-radius:12px; font-family:'Kanit',sans-serif; font-weight:700; font-size:1.05rem; cursor:pointer; transition:0.2s; margin-bottom:10px; border:none; text-align:center; }
+.btn-primary { background:var(--cookie); color:#fff; } /* เปลี่ยนให้ปุ่มหลักใช้สีธีม */
+.btn-primary:hover { filter:brightness(0.9); transform:translateY(-2px); }
 .btn-primary:disabled { background:#ccc; cursor:not-allowed; }
 .btn-secondary { background:none; color:var(--mid); border:1.5px solid var(--light); }
 .btn-secondary:hover { border-color:var(--cookie); color:var(--cookie); }
 .btn-small { padding:8px 12px; font-size:0.85rem; border-radius:8px; }
 
-/* REVIEW PAGE */
 .r-box { background:#fff; border:1.5px dashed var(--cookie); border-radius:16px; padding:20px; margin-bottom:20px; }
-.r-item { display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.95rem; }
-.r-shipping { display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.95rem; color:var(--mid); border-bottom:1px solid var(--light); padding-bottom:10px; }
+.r-item, .r-shipping { display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.95rem; }
+.r-shipping { color:var(--mid); border-bottom:1px solid var(--light); padding-bottom:10px; }
 .r-total { display:flex; justify-content:space-between; font-weight:700; font-size:1.15rem; color:var(--cookie); margin-top:10px; padding-top:10px; }
 
-/* ADMIN */
 .admin-login-box { background:#fff; padding:30px; border-radius:20px; border:1.5px solid var(--light); text-align:center; margin-top:40px; }
 .nav-bar { display:flex; gap:8px; margin-bottom:24px; overflow-x:auto; padding-bottom:5px; }
 .nav-btn { flex:1; min-width:100px; padding:10px; border-radius:10px; background:#fff; border:1.5px solid var(--light); font-weight:700; font-size:0.85rem; color:var(--mid); cursor:pointer; text-align:center; white-space:nowrap; }
@@ -78,29 +76,23 @@ textarea { resize:vertical; min-height:80px; }
 
 .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
 .stat-card { background:#fff; border:1.5px solid var(--light); border-radius:14px; padding:20px; text-align:center; }
-.stat-card h3 { font-size:0.8rem; color:var(--mid); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.stat-card h3 { font-size:0.8rem; color:var(--mid); text-transform:uppercase; margin-bottom:8px; }
 .stat-card .val { font-size:1.8rem; font-family:'Lora',serif; font-weight:700; color:var(--cookie); }
 
 .order-card { background:#fff; border:1.5px solid var(--light); border-radius:14px; padding:18px; margin-bottom:14px; position:relative; }
 .order-card .time { position:absolute; top:18px; right:18px; font-size:0.75rem; color:#bba990; }
 .order-card .name { font-family:'Lora',serif; font-size:1.1rem; font-weight:700; margin-bottom:4px; }
 .order-card .phone { font-size:0.85rem; color:var(--mid); margin-bottom:12px; }
-.order-card .address { background:var(--warm); padding:10px; border-radius:8px; font-size:0.85rem; margin-bottom:12px; }
+.order-card .address { background:var(--cream); padding:10px; border-radius:8px; font-size:0.85rem; margin-bottom:12px; border:1px solid var(--light); }
 .order-card .items { font-size:0.85rem; border-top:1px solid var(--light); padding-top:10px; margin-top:4px; line-height:1.6; }
 
-/* MENU EDITOR WITH IMAGE */
 .edit-menu-row { background:#fff; border:1.5px solid var(--light); border-radius:12px; padding:16px; margin-bottom:16px; display:grid; grid-template-columns:80px 1fr 100px; gap:12px; align-items:start;}
 .img-upload-box { text-align:center; }
 .img-preview { width:80px; height:80px; object-fit:cover; border-radius:10px; background:var(--warm); margin-bottom:8px; border:1px solid var(--light); }
-.file-input { width: 100%; font-size:0.65rem; }
-.menu-inputs { display:flex; flex-direction:column; gap:8px; }
-.menu-inputs input { padding:8px 10px; font-size:0.9rem; }
-.del-btn { background:var(--warm); color:var(--red); border:none; padding:8px; border-radius:8px; cursor:pointer; font-weight:700; font-size:0.85rem; margin-top:4px;}
+.del-btn { background:var(--cream); color:var(--red); border:1px solid #f5b7b1; padding:8px; border-radius:8px; cursor:pointer; font-weight:700; font-size:0.85rem; margin-top:4px;}
 
-footer { text-align:center; padding:20px; font-size:0.8rem; margin-top:auto; }
-footer a { color:#bba990; text-decoration:none; cursor:pointer; }
-footer a:hover { color:var(--cookie); }
-
+footer { text-align:center; padding:20px; font-size:0.8rem; margin-top:auto; background:rgba(255,255,255,0.7); backdrop-filter:blur(5px); }
+footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:bold; }
 @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 </style>
 </head>
@@ -111,47 +103,34 @@ footer a:hover { color:var(--cookie); }
   <h3 style="color:var(--cookie); font-family:'Lora'">Loading Shop...</h3>
 </div>
 
-<!-- PAGE: SHOP FRONTEND -->
 <div id="orderPage" class="page container">
   <div class="header">
     <h1 id="uiShopName">Shop Name</h1>
     <p id="uiShopDesc">Shop Description</p>
   </div>
-
-  <div id="closedBanner">⛔ Sorry, we are currently closed for new orders.</div>
-
+  <div id="closedBanner">⛔ ขออภัยค่ะ ตอนนี้ร้านปิดรับออเดอร์ชั่วคราว</div>
   <div id="orderFormArea">
     <div class="section-label">1. Choose your cookies</div>
     <div class="items-list" id="menuList"></div>
-
     <div class="form-section">
       <div class="section-label">2. Your details</div>
-      <div class="field"><label>Name *</label><input type="text" id="fname" placeholder="Your name"></div>
-      <div class="field"><label>Phone / LINE ID *</label><input type="text" id="fphone" placeholder="Contact number"></div>
-      <div class="field"><label>Delivery Address *</label><textarea id="faddress" placeholder="Full address"></textarea></div>
-      <div class="field"><label>Notes (optional)</label><input type="text" id="fnotes" placeholder="e.g. Allergies, gifts..."></div>
+      <div class="field"><label>ชื่อ-นามสกุล *</label><input type="text" id="fname" placeholder="Your name"></div>
+      <div class="field"><label>เบอร์โทรศัพท์ / LINE ID *</label><input type="text" id="fphone" placeholder="Contact number"></div>
+      <div class="field"><label>ที่อยู่จัดส่ง *</label><textarea id="faddress" placeholder="Full address"></textarea></div>
+      <div class="field"><label>หมายเหตุ (optional)</label><input type="text" id="fnotes" placeholder="e.g. Allergies, gifts..."></div>
     </div>
     <button class="btn btn-primary" onclick="goToReview()">Review Order ✦</button>
   </div>
 </div>
 
-<!-- PAGE: REVIEW -->
 <div id="reviewPage" class="page container">
   <div class="header"><h1>Review <em>Order</em></h1></div>
   <div class="r-box">
     <div class="section-label">Summary</div>
     <div id="reviewItems" style="margin-bottom:10px;"></div>
-    
-    <!-- ส่วนคำนวณค่าส่ง -->
-    <div class="r-shipping">
-      <span>Subtotal</span><span id="reviewSubtotal">฿0</span>
-    </div>
-    <div class="r-shipping" style="border:none;">
-      <span>Shipping Fee</span><span id="reviewShipping">฿0</span>
-    </div>
-    
+    <div class="r-shipping"><span>Subtotal</span><span id="reviewSubtotal">฿0</span></div>
+    <div class="r-shipping" style="border:none;"><span>Shipping Fee</span><span id="reviewShipping">฿0</span></div>
     <div class="r-total"><span>Grand Total</span><span id="reviewTotal">฿0</span></div>
-
     <div class="section-label" style="margin-top:25px;">Delivery To</div>
     <div id="reviewContact" style="font-weight:700; font-size:0.95rem;"></div>
     <div id="reviewAddress" style="font-size:0.85rem; color:var(--mid); margin-top:5px; line-height:1.5;"></div>
@@ -160,15 +139,13 @@ footer a:hover { color:var(--cookie); }
   <button class="btn btn-secondary" onclick="showPage('orderPage')">Back to Edit</button>
 </div>
 
-<!-- PAGE: THANK YOU -->
 <div id="thankPage" class="page container" style="text-align:center; padding-top:80px;">
   <div style="font-size:4rem; margin-bottom:10px;">🤎</div>
   <h2 style="font-family:'Lora'; margin-bottom:10px;">Order Received!</h2>
-  <p style="color:var(--mid); margin-bottom:30px;">Thank you for your order. We will contact you shortly.</p>
+  <p style="color:var(--mid); margin-bottom:30px;">ขอบคุณสำหรับออเดอร์นะคะ แม่ค้าจะรีบติดต่อกลับไปค่ะ ✨</p>
   <button class="btn btn-secondary" onclick="resetForm()">Order Again</button>
 </div>
 
-<!-- PAGE: ADMIN LOGIN -->
 <div id="adminLoginPage" class="page container">
   <div class="admin-login-box">
     <h2>Admin Access</h2>
@@ -180,13 +157,11 @@ footer a:hover { color:var(--cookie); }
   </div>
 </div>
 
-<!-- PAGE: ADMIN DASHBOARD -->
 <div id="ownerPage" class="page container-large">
   <div class="header" style="text-align:left; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
-    <h2 style="font-family:'Lora';">Dashboard</h2>
+    <h2 style="font-family:'Lora'; margin:0;">Dashboard</h2>
     <button class="btn btn-secondary btn-small" style="width:auto; margin:0;" onclick="showPage('orderPage')">View Shop ↗</button>
   </div>
-
   <div class="nav-bar">
     <div class="nav-btn active" onclick="switchAdminTab('tabSummary', this)">📊 Summary</div>
     <div class="nav-btn" onclick="switchAdminTab('tabOrders', this)">📋 Orders</div>
@@ -210,14 +185,27 @@ footer a:hover { color:var(--cookie); }
       <div class="section-label">Shop Settings</div>
       <div class="field">
         <label>Shop Status</label>
-        <select id="setIsOpen">
-          <option value="true">🟢 OPEN (Accepting Orders)</option>
-          <option value="false">🔴 CLOSED (Stop Orders)</option>
-        </select>
+        <select id="setIsOpen"><option value="true">🟢 OPEN (เปิดรับออเดอร์)</option><option value="false">🔴 CLOSED (ปิดรับออเดอร์)</option></select>
       </div>
       <div class="field"><label>Shop Name</label><input type="text" id="setShopName"></div>
       <div class="field"><label>Welcome Description</label><textarea id="setShopDesc"></textarea></div>
-      <div class="field"><label>Shipping Fee (฿)</label><input type="number" id="setShippingFee" placeholder="e.g. 50"></div>
+      <div class="field"><label>ค่าจัดส่ง (฿)</label><input type="number" id="setShippingFee"></div>
+    </div>
+
+    <!-- ส่วนอัปโหลดสีและภาพพื้นหลังที่เพิ่มมาใหม่ -->
+    <div class="form-section">
+      <div class="section-label">Theme & Design</div>
+      <div class="field">
+        <label>Theme Color (คลิกเพื่อเลือกสี)</label>
+        <input type="color" id="setThemeColor" style="height:50px; cursor:pointer;">
+      </div>
+      <div class="field">
+        <label>Background Image (อัปโหลดรูปพื้นหลัง)</label>
+        <img id="bgPreview" style="width:100%; max-height:200px; object-fit:cover; display:none; border-radius:10px; margin-bottom:10px; border:1px solid #ccc;">
+        <input type="file" accept="image/*" style="font-size: 0.8rem;" onchange="compressBgImage(event)">
+        <button class="btn btn-secondary btn-small" style="margin-top:10px;" onclick="clearBgImage()">🗑️ ลบรูปพื้นหลัง</button>
+        <input type="hidden" id="setBgImage">
+      </div>
     </div>
 
     <div class="form-section">
@@ -226,7 +214,6 @@ footer a:hover { color:var(--cookie); }
       </div>
       <div id="menuEditorList"></div>
     </div>
-
     <button class="btn btn-primary" id="btnSaveAdmin" onclick="saveAdminSettings()">Save All Settings & Menu</button>
   </div>
 </div>
@@ -245,14 +232,12 @@ let ORDERS = [];
 const cart = {};
 let currentOrder = null;
 
-// --- INIT ---
 window.onload = () => {
   if (API_URL === "ใส่ลิงก์_WEB_APP_URL_ของคูณเบลล์ตรงนี้") {
     alert("โปรดใส่ลิงก์ API_URL ในโค้ดก่อนใช้งานค่ะ");
     document.getElementById('loadingScreen').style.display = 'none';
     return;
   }
-  
   fetch(`${API_URL}?action=getShopData`)
     .then(res => res.json())
     .then(data => {
@@ -272,6 +257,18 @@ function applyShopSettings() {
   document.getElementById('uiShopName').textContent = SHOP_SETTINGS.shopName;
   document.getElementById('uiShopDesc').textContent = SHOP_SETTINGS.shopDesc;
   
+  // เปลี่ยนสีธีมของเว็บ
+  if(SHOP_SETTINGS.themeColor) {
+    document.documentElement.style.setProperty('--cookie', SHOP_SETTINGS.themeColor);
+  }
+  
+  // โหลดรูปพื้นหลัง
+  if (SHOP_SETTINGS.bgImage) {
+    document.body.style.backgroundImage = `url(${SHOP_SETTINGS.bgImage})`;
+  } else {
+    document.body.style.backgroundImage = "none";
+  }
+
   if (SHOP_SETTINGS.isOpen) {
     document.getElementById('closedBanner').style.display = 'none';
     document.getElementById('orderFormArea').style.display = 'block';
@@ -281,7 +278,6 @@ function applyShopSettings() {
   }
 }
 
-// --- FRONTEND ---
 function renderMenu() {
   document.getElementById('menuList').innerHTML = MENU.map(m => {
     const imgHtml = m.image ? `<img src="${m.image}" class="item-img">` : `<div class="item-img">🍪</div>`;
@@ -293,13 +289,19 @@ function renderMenu() {
         <span>${m.desc}</span>
         <div class="qty-wrap" onclick="event.stopPropagation()">
           <div class="qbtn" onclick="changeQty('${m.id}',-1)">-</div>
-          <div class="qnum" id="q-${m.id}">1</div>
+          <div class="qnum" id="q-${m.id}">${cart[m.id] || 1}</div>
           <div class="qbtn" onclick="changeQty('${m.id}',1)">+</div>
         </div>
       </div>
       <div class="item-price">฿${m.price}</div>
     </div>`;
   }).join('');
+  
+  // Re-apply selected state based on cart
+  Object.keys(cart).forEach(id => {
+    const row = document.getElementById('row-'+id);
+    if(row) row.classList.add('selected');
+  });
 }
 
 function toggleItem(id) {
@@ -314,10 +316,17 @@ function toggleItem(id) {
   }
 }
 
+// 💡 อัปเดตฟังก์ชันเปลี่ยนจำนวน: ถ้ากดลงไปที่ 0 จะเคลียร์ออกจากตะกร้า
 function changeQty(id, delta) {
   if (!cart[id]) return;
-  cart[id] = Math.max(1, cart[id]+delta);
-  document.getElementById('q-'+id).textContent = cart[id];
+  cart[id] += delta;
+  
+  if (cart[id] <= 0) {
+    delete cart[id];
+    document.getElementById('row-'+id).classList.remove('selected');
+  } else {
+    document.getElementById('q-'+id).textContent = cart[id];
+  }
 }
 
 function goToReview() {
@@ -326,8 +335,8 @@ function goToReview() {
   const address = document.getElementById('faddress').value.trim();
   const notes = document.getElementById('fnotes').value.trim();
 
-  if (!name || !phone || !address) return alert('Please fill in all required details (*)');
-  if (Object.keys(cart).length === 0) return alert('Please pick at least one cookie! 🍪');
+  if (!name || !phone || !address) return alert('กรุณากรอกข้อมูลให้ครบถ้วนค่ะ');
+  if (Object.keys(cart).length === 0) return alert('กรุณาเลือกคุกกี้อย่างน้อย 1 ชิ้น 🍪');
 
   const items = Object.entries(cart).map(([id, qty]) => {
     const m = MENU.find(x => x.id === id);
@@ -338,11 +347,8 @@ function goToReview() {
   const shipping = Number(SHOP_SETTINGS.shippingFee) || 0;
   const grandTotal = subtotal + shipping;
 
-  // เพิ่มค่าจัดส่งไปในรายการเพื่อเก็บลงชีต
   const itemsForDb = [...items];
-  if(shipping > 0) {
-    itemsForDb.push({ name: "+ Shipping Fee", qty: 1, subtotal: shipping });
-  }
+  if(shipping > 0) itemsForDb.push({ name: "+ ค่าจัดส่ง", qty: 1, subtotal: shipping });
 
   currentOrder = {
     action: "newOrder",
@@ -366,7 +372,7 @@ function goToReview() {
 function confirmOrder() {
   const btn = document.getElementById('btnConfirm');
   btn.disabled = true;
-  btn.textContent = "Processing...";
+  btn.textContent = "กำลังส่งออเดอร์...";
 
   fetch(API_URL, {
     method: "POST",
@@ -377,7 +383,7 @@ function confirmOrder() {
     btn.textContent = "Confirm & Place Order";
     showPage('thankPage');
   }).catch(() => {
-    alert("Order saved locally, network issue.");
+    alert("บันทึกข้อมูลเรียบร้อย (ทำงานแบบออฟไลน์)");
     showPage('thankPage');
   });
 }
@@ -389,14 +395,13 @@ function resetForm() {
   showPage('orderPage');
 }
 
-// --- ADMIN ---
 function loginAdmin() {
   if (document.getElementById('adminPin').value === ADMIN_PIN) {
     document.getElementById('adminPin').value = '';
     showPage('ownerPage');
     loadAdminData();
   } else {
-    alert("Incorrect PIN");
+    alert("รหัสผ่านไม่ถูกต้อง");
   }
 }
 
@@ -421,7 +426,7 @@ function loadAdminData() {
       document.getElementById('statRev').textContent = `฿${totalRev.toLocaleString()}`;
 
       if(ORDERS.length === 0) {
-        document.getElementById('adminOrdersList').innerHTML = `<p style="text-align:center; color:#888;">No orders yet.</p>`;
+        document.getElementById('adminOrdersList').innerHTML = `<p style="text-align:center; color:#888;">ยังไม่มีออเดอร์</p>`;
       } else {
         document.getElementById('adminOrdersList').innerHTML = ORDERS.map(o => `
           <div class="order-card">
@@ -440,24 +445,64 @@ function loadAdminData() {
       document.getElementById('setShopName').value = SHOP_SETTINGS.shopName;
       document.getElementById('setShopDesc').value = SHOP_SETTINGS.shopDesc;
       document.getElementById('setShippingFee').value = SHOP_SETTINGS.shippingFee || 0;
+      
+      // ดึงค่าสีและภาพพื้นหลัง
+      document.getElementById('setThemeColor').value = SHOP_SETTINGS.themeColor || "#c8873b";
+      document.getElementById('setBgImage').value = SHOP_SETTINGS.bgImage || "";
+      if(SHOP_SETTINGS.bgImage) {
+        document.getElementById('bgPreview').src = SHOP_SETTINGS.bgImage;
+        document.getElementById('bgPreview').style.display = 'block';
+      } else {
+        document.getElementById('bgPreview').style.display = 'none';
+      }
+
       renderMenuEditor();
     });
+}
+
+function compressBgImage(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const MAX_WIDTH = 1200; // ขนาดพื้นหลังให้ใหญ่ขึ้นหน่อย
+      const scaleSize = MAX_WIDTH / img.width;
+      canvas.width = MAX_WIDTH;
+      canvas.height = img.height * scaleSize;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.6); // ย่อขนาดไฟล์
+      document.getElementById('bgPreview').src = dataUrl;
+      document.getElementById('bgPreview').style.display = 'block';
+      document.getElementById('setBgImage').value = dataUrl;
+    }
+    img.src = e.target.result;
+  }
+  reader.readAsDataURL(file);
+}
+
+function clearBgImage() {
+  document.getElementById('bgPreview').style.display = 'none';
+  document.getElementById('setBgImage').value = '';
 }
 
 function renderMenuEditor() {
   const container = document.getElementById('menuEditorList');
   container.innerHTML = MENU.map((m, index) => {
-    const imgSrc = m.image ? m.image : 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; // Transparent placeholder
+    const imgSrc = m.image ? m.image : 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
     return `
     <div class="edit-menu-row">
       <div class="img-upload-box">
         <img src="${imgSrc}" class="img-preview" id="preview-${index}">
-        <input type="file" class="file-input" accept="image/*" onchange="compressAndPreview(event, ${index})">
+        <input type="file" style="width:100%; font-size:0.65rem;" accept="image/*" onchange="compressAndPreview(event, ${index})">
         <input type="hidden" class="m-image" id="b64-${index}" value="${m.image || ''}">
       </div>
-      <div class="menu-inputs">
-        <input type="text" placeholder="Menu Name" value="${m.name}" class="m-name">
-        <input type="text" placeholder="Description..." value="${m.desc}" class="m-desc">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <input type="text" placeholder="Menu Name" value="${m.name}" class="m-name" style="padding:8px;">
+        <input type="text" placeholder="Description..." value="${m.desc}" class="m-desc" style="padding:8px;">
         <input type="hidden" value="${m.id}" class="m-id">
       </div>
       <div style="display:flex; flex-direction:column; gap:8px;">
@@ -469,28 +514,21 @@ function renderMenuEditor() {
   }).join('');
 }
 
-// 🪄 ฟังก์ชันบีบอัดรูปภาพด้วย HTML5 Canvas (ไม่เปลืองเนื้อที่ชีต)
 function compressAndPreview(event, index) {
   const file = event.target.files[0];
   if(!file) return;
-  
   const reader = new FileReader();
   reader.onload = function(e) {
     const img = new Image();
     img.onload = function() {
       const canvas = document.createElement('canvas');
-      const MAX_WIDTH = 200; // ย่อขนาดความกว้างเหลือแค่ 200px
+      const MAX_WIDTH = 200;
       const scaleSize = MAX_WIDTH / img.width;
       canvas.width = MAX_WIDTH;
       canvas.height = img.height * scaleSize;
-      
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      
-      // แปลงเป็น Base64 (Quality 0.7 = ลดขนาดไฟล์ลงอีก)
       const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-      
-      // อัปเดตในจอแอดมิน
       document.getElementById('preview-' + index).src = dataUrl;
       document.getElementById('b64-' + index).value = dataUrl;
     }
@@ -520,26 +558,24 @@ function saveAdminSettings() {
     isOpen: document.getElementById('setIsOpen').value === "true",
     shopName: document.getElementById('setShopName').value,
     shopDesc: document.getElementById('setShopDesc').value,
-    shippingFee: Number(document.getElementById('setShippingFee').value) || 0
+    shippingFee: Number(document.getElementById('setShippingFee').value) || 0,
+    themeColor: document.getElementById('setThemeColor').value,
+    bgImage: document.getElementById('setBgImage').value
   };
 
   const newMenu = [];
   const rows = document.querySelectorAll('.edit-menu-row');
-  rows.forEach((row, index) => {
+  rows.forEach((row) => {
     newMenu.push({
       id: row.querySelector('.m-id').value,
-      image: row.querySelector('.m-image').value, // รูป Base64
+      image: row.querySelector('.m-image').value,
       name: row.querySelector('.m-name').value,
       price: Number(row.querySelector('.m-price').value),
       desc: row.querySelector('.m-desc').value
     });
   });
 
-  const payload = {
-    action: "saveAdminSettings",
-    settings: newSettings,
-    menu: newMenu
-  };
+  const payload = { action: "saveAdminSettings", settings: newSettings, menu: newMenu };
 
   fetch(API_URL, {
     method: "POST",
@@ -549,7 +585,7 @@ function saveAdminSettings() {
   .then(() => {
     btn.disabled = false;
     btn.textContent = "Save All Settings & Menu";
-    alert("Shop updated successfully!");
+    alert("บันทึกการตั้งค่าเรียบร้อยแล้วค่ะ!");
     SHOP_SETTINGS = newSettings;
     MENU = newMenu;
     applyShopSettings();
