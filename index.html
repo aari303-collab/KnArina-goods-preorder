@@ -198,6 +198,12 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
     <div id="reviewTotalText" style="font-size:1.2rem; font-weight:bold; line-height:1.6;"></div>
   </div>
 
+  <div class="r-box" style="margin-bottom:20px;">
+    <div class="section-label">Delivery To</div>
+    <div id="reviewContact" style="font-size:1.1rem; font-weight:bold;"></div>
+    <div id="reviewAddress" style="font-size:0.95rem; color:var(--mid); margin-top:5px; line-height:1.5;"></div>
+  </div>
+
   <button class="btn btn-primary" id="btnConfirm" onclick="confirmOrder()">ยืนยันและสั่งซื้อ</button>
   <button class="btn btn-secondary" onclick="showPage('shippingPage')">กลับไปแก้ไขข้อมูล</button>
 </div>
@@ -218,7 +224,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-primary" style="background:var(--green);" onclick="submitBalance()">แจ้งโอนเงิน ✦</button>
 </div>
 
-<!-- หน้า 5: Thank You -->
+<!-- หน้า 5: Thank You (Eazy Donate) -->
 <div id="thankPage" class="page container" style="text-align:center; padding-top:40px;">
   <div style="font-size:4rem; margin-bottom:10px;">🤎</div>
   <h2 style="font-family:'Lora'; margin-bottom:10px;" id="tyTitle">Order Received!</h2>
@@ -231,12 +237,12 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
     </div>
     <div style="font-size:1.1rem; line-height:1.6; color:var(--dark);">
       <strong>💳 ช่องทางการชำระเงิน</strong><br>
-      <span style="font-size:0.95rem; color:var(--mid);">สามารถโอนผ่าน TipMe ได้ที่ลิงก์นี้เลยค่ะ:</span><br>
-      <a href="https://tipme.in.th/k-arina" target="_blank" style="color:var(--cookie); font-weight:bold; font-size:1.15rem; text-decoration:underline; display:inline-block; margin-top:10px;">
-        https://tipme.in.th/k-arina
+      <span style="font-size:0.95rem; color:var(--mid);">สามารถโอนผ่าน Eazy Donate ได้ที่ลิงก์นี้เลยค่ะ:</span><br>
+      <a href="https://easydonate.app/knarina" target="_blank" style="color:var(--cookie); font-weight:bold; font-size:1.15rem; text-decoration:underline; display:inline-block; margin-top:10px;">
+        easydonate.app/knarina
       </a>
     </div>
-    <a href="https://tipme.in.th/k-arina" target="_blank" class="btn btn-primary" style="display:block; text-decoration:none; margin-top:20px;">คลิกเพื่อชำระเงิน ↗</a>
+    <a href="https://easydonate.app/knarina" target="_blank" class="btn btn-primary" style="display:block; text-decoration:none; margin-top:20px;">คลิกเพื่อชำระเงิน ↗</a>
   </div>
   <button class="btn btn-secondary" onclick="resetAndGoHome()">กลับหน้าแรก</button>
 </div>
@@ -314,6 +320,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
 
 <script>
 // ════════════════════════════════════════════════════════════
+// ⚠️ ใส่ลิงก์ Web App URL ของคุณเบลล์ที่นี่ค่ะ
 const API_URL = "https://script.google.com/macros/s/AKfycbwuDnms9rcXGIif9yoUMfs45FoVzXr2zG6-QPTPxarKFM2VPpkbXtOOCm7wHcPLfAh_/exec"; 
 const ADMIN_PIN = "admin8616";
 // ════════════════════════════════════════════════════════════
@@ -426,6 +433,7 @@ function toggleAddress() {
   }
 }
 
+// 🌟 แก้ไขฟังก์ชัน goToReview เพื่อแก้บั๊ก 🌟
 function goToReview() {
   const name = document.getElementById('fname').value.trim();
   const phone = document.getElementById('fphone').value.trim();
@@ -470,11 +478,10 @@ function goToReview() {
   else document.getElementById('reviewAddress').innerHTML = "🎪 <b>รับสินค้าด้วยตัวเองที่งาน Vworld</b>";
   document.getElementById('reviewContact').textContent = `${name} (${phone})`;
 
-  updatePaymentMode(); // ตั้งค่าชำระ 100% เป็นค่าเริ่มต้น
-  showPage('reviewPage');
+  updatePaymentMode(); // คำนวณยอดชำระแบบ 100% หรือ 30% และแสดงที่กล่อง
+  showPage('reviewPage'); // สลับไปหน้า Review
 }
 
-// 🌟 ระบบอัปเดตยอด 100% กับ 30% 🌟
 function updatePaymentMode() {
   if(!currentOrder) return;
   const payMethod = document.querySelector('input[name="payMethod"]:checked').value;
@@ -516,7 +523,7 @@ function confirmOrder() {
   btn.disabled = true;
   btn.textContent = "กำลังส่งออเดอร์...";
   
-  // แสดงยอดเงินในหน้า TipMe เฉพาะยอดที่ต้องจ่ายวันนี้ (paidAmount)
+  // แสดงยอดเงินในหน้า Eazy Donate
   document.getElementById('thankYouTotal').textContent = '฿' + currentOrder.paidAmount.toLocaleString();
   document.getElementById('tyTitle').textContent = "Order Received!";
   document.getElementById('tySubtitle').textContent = "ได้รับออเดอร์แล้ว ขอบคุณที่อุดหนุนอารินะนะคะ♥";
@@ -526,7 +533,6 @@ function confirmOrder() {
   .catch(() => { alert("บันทึกออฟไลน์เรียบร้อย"); btn.disabled = false; btn.textContent = "ยืนยันและสั่งซื้อ"; showPage('thankPage'); });
 }
 
-// 🌟 ระบบแจ้งชำระยอดคงเหลือ 🌟
 function submitBalance() {
   const name = document.getElementById('bname').value.trim();
   const phone = document.getElementById('bphone').value.trim();
@@ -554,7 +560,6 @@ function resetAndGoHome() {
   showPage('selectPage');
 }
 
-// 🌟 ระบบ ADMIN 🌟
 function loginAdmin() {
   if (document.getElementById('adminPin').value === ADMIN_PIN) {
     document.getElementById('adminPin').value = ''; showPage('ownerPage'); loadAdminData();
@@ -797,6 +802,7 @@ function saveAdminSettings() {
     btn.disabled = false; btn.textContent = "Save All Settings & Menu"; alert("บันทึกการตั้งค่าเรียบร้อยแล้วค่ะ!");
     SHOP_SETTINGS = newSettings; MENU = payload.menu; MERCH_MENU = payload.merchMenu;
     applyShopSettings();
+    if(document.getElementById('orderPage').classList.contains('active')){ renderMenu(); }
   }).catch(() => {
     alert("Error saving settings."); btn.disabled = false; btn.textContent = "Save All Settings & Menu";
   });
