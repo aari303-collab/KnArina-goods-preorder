@@ -3,42 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍪 Cookie Shop</title>
-<!-- ดึงฟอนต์ Itim และ Lora มาจาก Google Fonts -->
+<title>✨ Arina Shop</title>
 <link href="https://fonts.googleapis.com/css2?family=Itim&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 :root { --cream:#fef9f0; --warm:#faecd8; --cookie:#c8873b; --dark:#2b1d0e; --mid:#6b4226; --light:#e8ddd0; --green:#3d6b4a; --red:#c0392b; }
 
-/* ใช้ฟอนต์ Itim เป็นฟอนต์หลักของเว็บ */
 body { font-family:'Itim', cursive; background:var(--cream); color:var(--dark); min-height:100vh; display:flex; flex-direction:column; background-attachment: fixed; background-size: cover; background-position: center; transition: background-color 0.3s, background-image 0.5s; font-size: 1.05rem; }
 
 .page { display:none; flex: 1; }
-.page.active { display:block; }
-.container { max-width:560px; margin:20px auto; padding:30px 20px 50px; width: 100%; background: rgba(255,255,255,0.85); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); backdrop-filter: blur(5px); }
+.page.active { display:block; animation: fadeUp 0.4s ease both; }
+.container { max-width:560px; margin:20px auto; padding:30px 20px 50px; width: 100%; background: rgba(255,255,255,0.9); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); backdrop-filter: blur(5px); }
 .container-large { max-width:800px; margin:20px auto; padding:30px 20px 50px; width: 100%; background: rgba(255,255,255,0.95); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
 #loadingScreen { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--cream); z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; }
 .spinner { font-size:3rem; animation:spin 1.5s linear infinite; margin-bottom:15px; }
 @keyframes spin { 100% { transform:rotate(360deg); } }
 
-.header { text-align:center; margin-bottom:30px; animation:fadeUp 0.5s ease both; }
+.header { text-align:center; margin-bottom:30px; }
 .header h1 { font-family:'Lora', serif; font-size:2.2rem; line-height:1.2; margin-bottom:10px; }
 .header h1 em { font-style:italic; color:var(--cookie); }
 .header p { font-size:1rem; color:var(--mid); line-height:1.6; white-space:pre-wrap; }
 .section-label { font-size:0.9rem; letter-spacing:1px; text-transform:uppercase; color:var(--cookie); margin-bottom:12px; }
 
+/* โหมดปุ่มเลือกสินค้าหน้าแรก */
+.mode-btn-container { display:flex; flex-direction:column; gap:15px; margin-top:30px; }
+.mode-card { background:#fff; border:2px solid var(--light); border-radius:16px; padding:25px; text-align:center; cursor:pointer; transition:all 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.mode-card:hover { border-color:var(--cookie); transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.08); }
+.mode-icon { font-size:3rem; margin-bottom:10px; }
+.mode-title { font-size:1.3rem; font-weight:bold; color:var(--cookie); }
+
 #closedBanner { display:none; background:var(--warm); color:var(--red); border:1.5px dashed var(--red); padding:20px; border-radius:14px; text-align:center; margin-bottom:20px; font-size: 1.1rem; }
 
 .items-list { display:flex; flex-direction:column; gap:12px; margin-bottom:28px; }
-.item-row { background:#fff; border:1.5px solid var(--light); border-radius:16px; padding:12px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:all 0.2s; animation:fadeUp 0.4s ease both; }
+.item-row { background:#fff; border:1.5px solid var(--light); border-radius:16px; padding:12px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:all 0.2s; }
 .item-row:hover { border-color:var(--cookie); }
 .item-row.selected { border-color:var(--cookie); background:#fffbf5; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
 .item-img { width:75px; height:75px; object-fit:cover; border-radius:12px; flex-shrink:0; background:var(--warm); display:flex; align-items:center; justify-content:center; font-size:1.5rem; }
 .item-info { flex:1; }
 .item-info strong { display:block; font-size:1.1rem; margin-bottom:3px; }
 .item-info span { font-size:0.9rem; color:var(--mid); line-height:1.3; display:block; }
-.item-price { color:var(--cookie); font-size:1.1rem; }
+.item-price { color:var(--cookie); font-size:1.1rem; font-weight:bold; }
 
 .qty-wrap { display:none; align-items:center; gap:8px; margin-top:8px; }
 .item-row.selected .qty-wrap { display:flex; }
@@ -46,16 +51,15 @@ body { font-family:'Itim', cursive; background:var(--cream); color:var(--dark); 
 .qbtn:hover { background:var(--cookie); color:#fff; }
 .qnum { min-width:20px; text-align:center; font-size:1.1rem; }
 
-.form-section { background:#fff; border-radius:20px; padding:24px 20px; margin-bottom:18px; border:1.5px solid var(--light); animation:fadeUp 0.5s ease 0.2s both; }
+.form-section { background:#fff; border-radius:20px; padding:24px 20px; margin-bottom:18px; border:1.5px solid var(--light); }
 .field { margin-bottom:16px; }
 .field label { display:block; font-size:0.95rem; color:var(--mid); margin-bottom:6px; }
-input, textarea, select { width:100%; padding:12px; border:1.5px solid #e8ddd0; border-radius:10px; font-family:'Itim', cursive; font-size:1rem; background:var(--cream); outline:none; transition:0.2s; }
+input, textarea, select { width:100%; padding:12px; border:1.5px solid var(--light); border-radius:10px; font-family:'Itim', cursive; font-size:1rem; background:var(--cream); outline:none; transition:0.2s; }
 input:focus, textarea:focus, select:focus { border-color:var(--cookie); background:#fff; }
 
 .btn { width:100%; padding:16px; border-radius:12px; font-family:'Itim', cursive; font-size:1.15rem; cursor:pointer; transition:0.2s; margin-bottom:10px; border:none; text-align:center; }
 .btn-primary { background:var(--cookie); color:#fff; }
 .btn-primary:hover { filter:brightness(0.9); transform:translateY(-2px); }
-.btn-primary:disabled { background:#ccc; cursor:not-allowed; }
 .btn-secondary { background:none; color:var(--mid); border:1.5px solid var(--light); }
 .btn-secondary:hover { border-color:var(--cookie); color:var(--cookie); }
 .btn-small { padding:8px 12px; font-size:0.9rem; border-radius:8px; }
@@ -63,7 +67,7 @@ input:focus, textarea:focus, select:focus { border-color:var(--cookie); backgrou
 .r-box { background:#fff; border:1.5px dashed var(--cookie); border-radius:16px; padding:20px; margin-bottom:20px; }
 .r-item, .r-shipping { display:flex; justify-content:space-between; margin-bottom:10px; font-size:1.05rem; }
 .r-shipping { color:var(--mid); border-bottom:1px solid var(--light); padding-bottom:10px; }
-.r-total { display:flex; justify-content:space-between; font-size:1.25rem; color:var(--cookie); margin-top:10px; padding-top:10px; }
+.r-total { display:flex; justify-content:space-between; font-size:1.25rem; color:var(--cookie); margin-top:10px; padding-top:10px; font-weight:bold; }
 
 .admin-login-box { background:#fff; padding:30px; border-radius:20px; border:1.5px solid var(--light); text-align:center; margin-top:40px; }
 .nav-bar { display:flex; gap:8px; margin-bottom:24px; overflow-x:auto; padding-bottom:5px; }
@@ -72,26 +76,17 @@ input:focus, textarea:focus, select:focus { border-color:var(--cookie); backgrou
 .admin-tab-content { display:none; }
 .admin-tab-content.active { display:block; animation:fadeUp 0.3s ease both; }
 
-.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
-.stat-card { background:#fff; border:1.5px solid var(--light); border-radius:14px; padding:20px; text-align:center; }
-.stat-card h3 { font-size:0.9rem; color:var(--mid); text-transform:uppercase; margin-bottom:8px; }
-.stat-card .val { font-size:1.8rem; font-family:'Lora',serif; color:var(--cookie); }
-
 .order-card { background:#fff; border:1.5px solid var(--light); border-radius:14px; padding:18px; margin-bottom:14px; position:relative; }
 .order-card .time { position:absolute; top:18px; right:18px; font-size:0.85rem; color:#bba990; font-family:sans-serif; }
-.order-card .name { font-family:'Lora',serif; font-size:1.2rem; font-weight:600; margin-bottom:4px; }
-.order-card .phone { font-size:0.95rem; color:var(--mid); margin-bottom:12px; }
-.order-card .address { background:var(--cream); padding:10px; border-radius:8px; font-size:0.95rem; margin-bottom:12px; border:1px solid var(--light); }
-.order-card .items { font-size:0.95rem; border-top:1px solid var(--light); padding-top:10px; margin-top:4px; line-height:1.6; }
-
 .edit-menu-row { background:#fff; border:1.5px solid var(--light); border-radius:12px; padding:16px; margin-bottom:16px; display:grid; grid-template-columns:80px 1fr 100px; gap:12px; align-items:start;}
-.img-upload-box { text-align:center; }
-.img-preview { width:80px; height:80px; object-fit:cover; border-radius:10px; background:var(--warm); margin-bottom:8px; border:1px solid var(--light); }
-.del-btn { background:var(--cream); color:var(--red); border:1px solid #f5b7b1; padding:8px; border-radius:8px; cursor:pointer; font-size:0.95rem; margin-top:4px; font-family:'Itim', cursive;}
 
 footer { text-align:center; padding:20px; font-size:0.9rem; margin-top:auto; background:rgba(255,255,255,0.7); backdrop-filter:blur(5px); border-radius: 20px 20px 0 0; }
 footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:bold; }
 @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+.sub-nav { display:flex; gap:10px; margin-bottom:15px; justify-content:center;}
+.sub-nav-btn { padding:8px 15px; border-radius:20px; border:1.5px solid var(--cookie); background:none; color:var(--cookie); cursor:pointer; font-family:'Itim'; }
+.sub-nav-btn.active { background:var(--cookie); color:#fff; }
 </style>
 </head>
 <body>
@@ -101,26 +96,49 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <h3 style="color:var(--cookie); font-family:'Lora'">Loading Shop...</h3>
 </div>
 
-<div id="orderPage" class="page container">
+<!-- หน้า 1: เลือกหมวดหมู่ -->
+<div id="selectPage" class="page container active">
   <div class="header">
-    <h1 id="uiShopName">Shop Name</h1>
-    <p id="uiShopDesc">Shop Description</p>
+    <h1 id="uiShopNameMain">Arina Shop</h1>
+    <p id="uiShopDescMain">ยินดีต้อนรับค่ะ ✨</p>
   </div>
-  <div id="closedBanner">⛔ ขออภัยค่ะ ตอนนี้ร้านปิดรับออเดอร์ชั่วคราว</div>
-  <div id="orderFormArea">
-    <div class="section-label">1. Choose your cookies</div>
-    <div class="items-list" id="menuList"></div>
-    <div class="form-section">
-      <div class="section-label">2. Your details</div>
-      <div class="field"><label>ชื่อ *</label><input type="text" id="fname" placeholder="ชื่อคุณเมโลดี้ที่โอน Tipme ต้องตรงกันนะคะ จะได้เช็คได้"></div>
-      <div class="field"><label>เบอร์โทรศัพท์ *</label><input type="text" id="fphone" placeholder="ช่องทางการติดต่อ"></div>
-      <div class="field"><label>ที่อยู่จัดส่ง *</label><textarea id="faddress" placeholder="ชื่อ-นามสกุลที่จะให้เขียนจ่าหน้า บ้านเลขที่ ถนน ซอย ตำบล อำเภอ จังหวัด รหัสไปรษณีย์"></textarea></div>
-      <div class="field"><label>สิ่งที่ยากจะบอกอารินะ (optional)</label><input type="text" id="fnotes" placeholder="ติ ชมอารินะหรืออะไรก็ได้ค่ะ อารินะเก็บไว้อ่านคนเดียวเขียนมาได้เลยนะคะ"></div>
+  <div id="closedBanner">⛔ ขออภัยค่ะ ตอนนี้ปิดรับออเดอร์ชั่วคราว</div>
+  
+  <div id="selectModesArea" class="mode-btn-container">
+    <div class="mode-card" onclick="selectMode('cookie')">
+      <div class="mode-icon">🍪</div>
+      <div class="mode-title">สั่งขนม / คุกกี้</div>
+      <div style="font-size:0.9rem; color:var(--mid); margin-top:5px;">Homemade Cookies</div>
     </div>
-    <button class="btn btn-primary" onclick="goToReview()">Review Order ✦</button>
+    <div class="mode-card" onclick="selectMode('merch')">
+      <div class="mode-icon">✨</div>
+      <div class="mode-title">สั่งซื้อสินค้า Pre-order</div>
+      <div style="font-size:0.9rem; color:var(--mid); margin-top:5px;">Official Merchandise</div>
+    </div>
   </div>
 </div>
 
+<!-- หน้า 2: ฟอร์มสั่งซื้อ (ปรับเปลี่ยนตามโหมด) -->
+<div id="orderPage" class="page container">
+  <button class="btn-secondary btn-small" style="margin-bottom:20px;" onclick="showPage('selectPage')">← ย้อนกลับไปเลือกหมวดหมู่</button>
+  <div class="header">
+    <h1 id="modeTitle">สั่ง...</h1>
+  </div>
+  
+  <div class="section-label">1. เลือกรายการที่ต้องการ</div>
+  <div class="items-list" id="menuList"></div>
+  
+  <div class="form-section">
+    <div class="section-label">2. ข้อมูลจัดส่ง</div>
+    <div class="field"><label>ชื่อ-นามสกุล *</label><input type="text" id="fname" placeholder="ชื่อของคุณลูกค้า"></div>
+    <div class="field"><label>เบอร์โทรศัพท์ / LINE ID *</label><input type="text" id="fphone" placeholder="ช่องทางการติดต่อ"></div>
+    <div class="field"><label>ที่อยู่จัดส่ง *</label><textarea id="faddress" placeholder="บ้านเลขที่ ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์"></textarea></div>
+    <div class="field"><label>หมายเหตุ (optional)</label><input type="text" id="fnotes" placeholder="เช่น แพ้ถั่ว, ไซส์เสื้อ, ลายที่ต้องการ..."></div>
+  </div>
+  <button class="btn btn-primary" onclick="goToReview()">Review Order ✦</button>
+</div>
+
+<!-- หน้า 3: Review -->
 <div id="reviewPage" class="page container">
   <div class="header"><h1>Review <em>Order</em></h1></div>
   <div class="r-box">
@@ -137,7 +155,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-secondary" onclick="showPage('orderPage')">กลับไปแก้ไข</button>
 </div>
 
-<!-- 🌟 หน้า THANK YOU PAGE (ฉบับอัปเดตใช้ TipMe) 🌟 -->
+<!-- หน้า 4: Thank You (TipMe) -->
 <div id="thankPage" class="page container" style="text-align:center; padding-top:40px;">
   <div style="font-size:4rem; margin-bottom:10px;">🤎</div>
   <h2 style="font-family:'Lora'; margin-bottom:10px;">Order Received!</h2>
@@ -148,7 +166,6 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
       <div style="font-size:1rem; color:var(--mid); margin-bottom:5px;">ยอดชำระเงินทั้งหมด</div>
       <div id="thankYouTotal" style="font-size:2.5rem; color:var(--cookie); font-family:'Lora',serif;">฿0</div>
     </div>
-
     <div style="font-size:1.1rem; line-height:1.6; color:var(--dark);">
       <strong>💳 ช่องทางการชำระเงิน</strong><br>
       <span style="font-size:0.95rem; color:var(--mid);">สามารถโอนผ่าน TipMe ได้ที่ลิงก์นี้เลยค่ะ:</span><br>
@@ -156,13 +173,12 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
         https://tipme.in.th/k-arina
       </a>
     </div>
-
     <a href="https://tipme.in.th/k-arina" target="_blank" class="btn btn-primary" style="display:block; text-decoration:none; margin-top:20px;">คลิกเพื่อชำระเงิน ↗</a>
   </div>
-
-  <button class="btn btn-secondary" onclick="resetForm()">สั่งซื้อเพิ่มอีก</button>
+  <button class="btn btn-secondary" onclick="resetAndGoHome()">กลับหน้าแรก</button>
 </div>
 
+<!-- ระบบ Admin -->
 <div id="adminLoginPage" class="page container">
   <div class="admin-login-box">
     <h2 style="font-family: 'Lora';">Admin Access</h2>
@@ -170,14 +186,14 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
       <input type="password" id="adminPin" placeholder="Enter PIN" style="text-align:center;">
     </div>
     <button class="btn btn-primary" onclick="loginAdmin()">Login</button>
-    <button class="btn btn-secondary" onclick="showPage('orderPage')">Cancel</button>
+    <button class="btn btn-secondary" onclick="showPage('selectPage')">Cancel</button>
   </div>
 </div>
 
 <div id="ownerPage" class="page container-large">
   <div class="header" style="text-align:left; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
     <h2 style="font-family:'Lora'; margin:0;">Dashboard</h2>
-    <button class="btn btn-secondary btn-small" style="width:auto; margin:0;" onclick="showPage('orderPage')">View Shop ↗</button>
+    <button class="btn btn-secondary btn-small" style="width:auto; margin:0;" onclick="showPage('selectPage')">View Shop ↗</button>
   </div>
   <div class="nav-bar">
     <div class="nav-btn active" onclick="switchAdminTab('tabSummary', this)">📊 Summary</div>
@@ -187,49 +203,55 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
 
   <div id="tabSummary" class="admin-tab-content active">
     <div class="stats-grid">
-      <div class="stat-card"><h3>Total Revenue</h3><div class="val" id="statRev">฿0</div></div>
-      <div class="stat-card"><h3>Total Orders</h3><div class="val" id="statCount">0</div></div>
+      <div class="stat-card"><h3>รายได้รวม (ทุกโหมด)</h3><div class="val" id="statRev">฿0</div></div>
+      <div class="stat-card"><h3>จำนวนออเดอร์ (ทุกโหมด)</h3><div class="val" id="statCount">0</div></div>
     </div>
   </div>
 
   <div id="tabOrders" class="admin-tab-content">
+    <div class="sub-nav">
+      <button class="sub-nav-btn active" id="btnViewCookie" onclick="renderAdminOrders('cookie')">ออเดอร์ ขนม/คุกกี้</button>
+      <button class="sub-nav-btn" id="btnViewMerch" onclick="renderAdminOrders('merch')">ออเดอร์ สินค้า (Merch)</button>
+    </div>
     <button class="btn btn-secondary" style="margin-bottom:15px;" onclick="loadAdminData()">Refresh Orders ↻</button>
     <div id="adminOrdersList"></div>
   </div>
 
   <div id="tabSettings" class="admin-tab-content">
     <div class="form-section">
-      <div class="section-label">Shop Settings</div>
+      <div class="section-label">Shop Settings (ใช้ร่วมกัน)</div>
       <div class="field">
         <label>สถานะร้าน (Shop Status)</label>
         <select id="setIsOpen"><option value="true">🟢 OPEN (เปิดรับออเดอร์)</option><option value="false">🔴 CLOSED (ปิดรับออเดอร์)</option></select>
       </div>
       <div class="field"><label>ชื่อร้าน (Shop Name)</label><input type="text" id="setShopName"></div>
-      <div class="field"><label>คำอธิบายหน้าร้าน (Welcome Description)</label><textarea id="setShopDesc"></textarea></div>
+      <div class="field"><label>ข้อความต้อนรับ</label><textarea id="setShopDesc"></textarea></div>
       <div class="field"><label>ค่าจัดส่ง (฿)</label><input type="number" id="setShippingFee"></div>
-    </div>
-
-    <div class="form-section">
-      <div class="section-label">Theme & Background Design</div>
-      <div class="field">
-        <label>Theme Color (คลิกเพื่อเลือกสี)</label>
-        <input type="color" id="setThemeColor" style="height:50px; cursor:pointer; padding: 5px;">
-      </div>
+      <div class="field"><label>Theme Color (คลิกเพื่อเลือกสี)</label><input type="color" id="setThemeColor" style="height:50px; cursor:pointer; padding: 5px;"></div>
       <div class="field">
         <label>ภาพพื้นหลัง (วางลิงก์รูป หรือ อัปโหลดจากเครื่อง)</label>
-        <img id="bgPreview" style="width:100%; max-height:200px; object-fit:cover; display:none; border-radius:10px; margin-bottom:10px; border:1px solid #ccc; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+        <img id="bgPreview" style="width:100%; max-height:200px; object-fit:cover; display:none; border-radius:10px; margin-bottom:10px; border:1px solid #ccc;">
         <input type="text" id="setBgImage" placeholder="วางลิงก์รูปลงที่นี่ หรือกดเลือกไฟล์ด้านล่าง..." style="margin-bottom:8px;" oninput="updateBgPreview()">
         <input type="file" id="bgFileInput" accept="image/*" style="font-size: 0.9rem;" onchange="compressBgImage(event)">
         <button class="btn btn-secondary btn-small" style="margin-top:10px;" onclick="clearBgImage()">🗑️ ลบรูปพื้นหลัง</button>
       </div>
     </div>
 
+    <!-- ส่วนจัดการเมนูแยกหมวด -->
     <div class="form-section">
       <div class="section-label" style="display:flex; justify-content:space-between; align-items:center;">
-        Menu Manager <button class="btn btn-secondary btn-small" style="width:auto; margin:0;" onclick="addMenuItem()">+ Add Item</button>
+        🍪 เมนูขนม/คุกกี้ <button class="btn btn-secondary btn-small" style="width:auto; margin:0;" onclick="addMenuItem('cookie')">+ เพิ่มขนม</button>
       </div>
-      <div id="menuEditorList"></div>
+      <div id="menuEditorList_cookie"></div>
     </div>
+    
+    <div class="form-section">
+      <div class="section-label" style="display:flex; justify-content:space-between; align-items:center;">
+        ✨ สินค้า Pre-order <button class="btn btn-secondary btn-small" style="width:auto; margin:0;" onclick="addMenuItem('merch')">+ เพิ่มสินค้า</button>
+      </div>
+      <div id="menuEditorList_merch"></div>
+    </div>
+
     <button class="btn btn-primary" id="btnSaveAdmin" onclick="saveAdminSettings()">Save All Settings & Menu</button>
   </div>
 </div>
@@ -238,20 +260,24 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
 
 <script>
 // ════════════════════════════════════════════════════════════
-// ⚠️ ใส่ลิงก์ Web App URL ของคุณเบลล์ที่นี่ค่ะ
-const API_URL = "https://script.google.com/macros/s/AKfycbwuDnms9rcXGIif9yoUMfs45FoVzXr2zG6-QPTPxarKFM2VPpkbXtOOCm7wHcPLfAh_/exec"; 
-const ADMIN_PIN = "admin8616";
+const API_URL = "ใส่ลิงก์_WEB_APP_URL_ของคูณเบลล์ตรงนี้"; 
+const ADMIN_PIN = "admin1234";
 // ════════════════════════════════════════════════════════════
 
 let SHOP_SETTINGS = {};
-let MENU = [];
-let ORDERS = [];
-const cart = {};
+let MENU = [];      // สำหรับคุกกี้
+let MERCH_MENU = []; // สำหรับสินค้า
+let ORDERS = [];    // ออเดอร์คุกกี้
+let MERCH_ORDERS = []; // ออเดอร์สินค้า
+
+let cartCookie = {};
+let cartMerch = {};
+let currentMode = "cookie"; // 'cookie' หรือ 'merch'
 let currentOrder = null;
 
 window.onload = () => {
-  if (API_URL === "ใส่ลิงก์_WEB_APP_URL_ของคูณเบลล์ตรงนี้") {
-    alert("อย่าลืมนำ API_URL จาก Google Apps Script มาใส่ในโค้ดนะคะ 🤎");
+  if (API_URL === "https://script.google.com/macros/s/AKfycbwuDnms9rcXGIif9yoUMfs45FoVzXr2zG6-QPTPxarKFM2VPpkbXtOOCm7wHcPLfAh_/exec") {
+    alert("อย่าลืมนำ API_URL มาใส่ในโค้ดนะคะ 🤎");
     document.getElementById('loadingScreen').style.display = 'none';
     return;
   }
@@ -260,10 +286,10 @@ window.onload = () => {
     .then(data => {
       SHOP_SETTINGS = data.settings;
       MENU = data.menu;
+      MERCH_MENU = data.merchMenu || [];
       applyShopSettings();
-      renderMenu();
       document.getElementById('loadingScreen').style.display = 'none';
-      showPage('orderPage');
+      showPage('selectPage');
     }).catch(err => {
       console.error(err);
       document.getElementById('loadingScreen').style.display = 'none';
@@ -271,13 +297,12 @@ window.onload = () => {
 };
 
 function applyShopSettings() {
-  document.getElementById('uiShopName').textContent = SHOP_SETTINGS.shopName;
-  document.getElementById('uiShopDesc').textContent = SHOP_SETTINGS.shopDesc;
+  document.getElementById('uiShopNameMain').textContent = SHOP_SETTINGS.shopName;
+  document.getElementById('uiShopDescMain').textContent = SHOP_SETTINGS.shopDesc;
   
   if(SHOP_SETTINGS.themeColor) {
     document.documentElement.style.setProperty('--cookie', SHOP_SETTINGS.themeColor);
   }
-  
   if (SHOP_SETTINGS.bgImage) {
     document.body.style.backgroundImage = `url(${SHOP_SETTINGS.bgImage})`;
   } else {
@@ -286,16 +311,27 @@ function applyShopSettings() {
 
   if (SHOP_SETTINGS.isOpen) {
     document.getElementById('closedBanner').style.display = 'none';
-    document.getElementById('orderFormArea').style.display = 'block';
+    document.getElementById('selectModesArea').style.display = 'flex';
   } else {
     document.getElementById('closedBanner').style.display = 'block';
-    document.getElementById('orderFormArea').style.display = 'none';
+    document.getElementById('selectModesArea').style.display = 'none';
   }
 }
 
+// 🌟 เลือกโหมด 🌟
+function selectMode(mode) {
+  currentMode = mode;
+  document.getElementById('modeTitle').innerHTML = mode === 'cookie' ? "สั่งขนม / คุกกี้ 🍪" : "สั่งสินค้า Pre-order ✨";
+  renderMenu();
+  showPage('orderPage');
+}
+
 function renderMenu() {
-  document.getElementById('menuList').innerHTML = MENU.map(m => {
-    const imgHtml = m.image ? `<img src="${m.image}" class="item-img">` : `<div class="item-img">🍪</div>`;
+  const targetMenu = currentMode === 'cookie' ? MENU : MERCH_MENU;
+  const targetCart = currentMode === 'cookie' ? cartCookie : cartMerch;
+
+  document.getElementById('menuList').innerHTML = targetMenu.map(m => {
+    const imgHtml = m.image ? `<img src="${m.image}" class="item-img">` : `<div class="item-img">${currentMode === 'cookie'?'🍪':'✨'}</div>`;
     return `
     <div class="item-row" id="row-${m.id}" onclick="toggleItem('${m.id}')">
       ${imgHtml}
@@ -304,7 +340,7 @@ function renderMenu() {
         <span>${m.desc}</span>
         <div class="qty-wrap" onclick="event.stopPropagation()">
           <div class="qbtn" onclick="changeQty('${m.id}',-1)">-</div>
-          <div class="qnum" id="q-${m.id}">${cart[m.id] || 1}</div>
+          <div class="qnum" id="q-${m.id}">${targetCart[m.id] || 1}</div>
           <div class="qbtn" onclick="changeQty('${m.id}',1)">+</div>
         </div>
       </div>
@@ -312,32 +348,34 @@ function renderMenu() {
     </div>`;
   }).join('');
   
-  Object.keys(cart).forEach(id => {
+  Object.keys(targetCart).forEach(id => {
     const row = document.getElementById('row-'+id);
     if(row) row.classList.add('selected');
   });
 }
 
 function toggleItem(id) {
+  const targetCart = currentMode === 'cookie' ? cartCookie : cartMerch;
   const row = document.getElementById('row-'+id);
-  if (cart[id]) {
-    delete cart[id];
+  if (targetCart[id]) {
+    delete targetCart[id];
     row.classList.remove('selected');
   } else {
-    cart[id] = 1;
+    targetCart[id] = 1;
     row.classList.add('selected');
     document.getElementById('q-'+id).textContent = 1;
   }
 }
 
 function changeQty(id, delta) {
-  if (!cart[id]) return;
-  cart[id] += delta;
-  if (cart[id] <= 0) {
-    delete cart[id];
+  const targetCart = currentMode === 'cookie' ? cartCookie : cartMerch;
+  if (!targetCart[id]) return;
+  targetCart[id] += delta;
+  if (targetCart[id] <= 0) {
+    delete targetCart[id];
     document.getElementById('row-'+id).classList.remove('selected');
   } else {
-    document.getElementById('q-'+id).textContent = cart[id];
+    document.getElementById('q-'+id).textContent = targetCart[id];
   }
 }
 
@@ -347,11 +385,14 @@ function goToReview() {
   const address = document.getElementById('faddress').value.trim();
   const notes = document.getElementById('fnotes').value.trim();
 
-  if (!name || !phone || !address) return alert('กรุณากรอกข้อมูลให้ครบถ้วนค่ะ');
-  if (Object.keys(cart).length === 0) return alert('กรุณาเลือกคุกกี้อย่างน้อย 1 ชิ้น 🍪');
+  const targetCart = currentMode === 'cookie' ? cartCookie : cartMerch;
+  const targetMenu = currentMode === 'cookie' ? MENU : MERCH_MENU;
 
-  const items = Object.entries(cart).map(([id, qty]) => {
-    const m = MENU.find(x => x.id === id);
+  if (!name || !phone || !address) return alert('กรุณากรอกข้อมูลจัดส่งให้ครบถ้วนค่ะ');
+  if (Object.keys(targetCart).length === 0) return alert('กรุณาเลือกสินค้าอย่างน้อย 1 ชิ้นนะคะ');
+
+  const items = Object.entries(targetCart).map(([id, qty]) => {
+    const m = targetMenu.find(x => x.id === id);
     return { name:m.name, qty, price:m.price, subtotal:m.price*qty };
   });
   
@@ -364,6 +405,7 @@ function goToReview() {
 
   currentOrder = {
     action: "newOrder",
+    orderType: currentMode, // สำคัญ! ส่งไปบอกหลังบ้านว่าเป็นออเดอร์ประเภทไหน
     time: new Date().toLocaleString('th-TH'),
     name, phone, address, notes, items: itemsForDb, total: grandTotal
   };
@@ -385,8 +427,6 @@ function confirmOrder() {
   const btn = document.getElementById('btnConfirm');
   btn.disabled = true;
   btn.textContent = "กำลังส่งออเดอร์...";
-  
-  // 🌟 เพิ่มบรรทัดนี้เพื่อดึงยอดเงินรวมไปแสดงในหน้าชำระเงินค่ะ
   document.getElementById('thankYouTotal').textContent = '฿' + currentOrder.total.toLocaleString();
 
   fetch(API_URL, {
@@ -405,11 +445,11 @@ function confirmOrder() {
   });
 }
 
-function resetForm() {
-  Object.keys(cart).forEach(id => delete cart[id]);
-  renderMenu();
+function resetAndGoHome() {
+  cartCookie = {};
+  cartMerch = {};
   ['fname','fphone','faddress','fnotes'].forEach(id => document.getElementById(id).value = '');
-  showPage('orderPage');
+  showPage('selectPage');
 }
 
 function loginAdmin() {
@@ -434,29 +474,19 @@ function loadAdminData() {
   fetch(`${API_URL}?action=getAdminData`)
     .then(res => res.json())
     .then(data => {
-      ORDERS = data.orders;
+      ORDERS = data.orders || [];
+      MERCH_ORDERS = data.merchOrders || [];
       SHOP_SETTINGS = data.settings;
-      MENU = data.menu;
+      MENU = data.menu || [];
+      MERCH_MENU = data.merchMenu || [];
       
-      document.getElementById('statCount').textContent = ORDERS.length;
-      const totalRev = ORDERS.reduce((sum, o) => sum + Number(o.total), 0);
+      const totalCount = ORDERS.length + MERCH_ORDERS.length;
+      const totalRev = ORDERS.reduce((sum, o) => sum + Number(o.total), 0) + MERCH_ORDERS.reduce((sum, o) => sum + Number(o.total), 0);
+      
+      document.getElementById('statCount').textContent = totalCount;
       document.getElementById('statRev').textContent = `฿${totalRev.toLocaleString()}`;
 
-      if(ORDERS.length === 0) {
-        document.getElementById('adminOrdersList').innerHTML = `<p style="text-align:center; color:#888;">ยังไม่มีออเดอร์</p>`;
-      } else {
-        document.getElementById('adminOrdersList').innerHTML = ORDERS.map(o => `
-          <div class="order-card">
-            <div class="time">${o.time}</div>
-            <div class="name">${o.name}</div>
-            <div class="phone">📞 ${o.phone}</div>
-            <div class="address">${o.address.replace(/\n/g,'<br>')}</div>
-            <div class="items">${o.items}</div>
-            <div style="font-size:1.1rem; color:var(--cookie); margin-top:10px;">Grand Total: ฿${o.total.toLocaleString()}</div>
-            ${o.notes ? `<div style="font-size:0.9rem; color:#888; margin-top:5px;">📝 ${o.notes}</div>` : ''}
-          </div>
-        `).join('');
-      }
+      renderAdminOrders('cookie'); // Default view
 
       document.getElementById('setIsOpen').value = SHOP_SETTINGS.isOpen ? "true" : "false";
       document.getElementById('setShopName').value = SHOP_SETTINGS.shopName;
@@ -466,27 +496,39 @@ function loadAdminData() {
       
       const savedBg = SHOP_SETTINGS.bgImage || "";
       document.getElementById('setBgImage').value = savedBg;
-      if(savedBg) {
-        document.getElementById('bgPreview').src = savedBg;
-        document.getElementById('bgPreview').style.display = 'block';
-      } else {
-        document.getElementById('bgPreview').style.display = 'none';
-      }
+      updateBgPreview();
 
-      renderMenuEditor();
+      renderMenuEditor('cookie');
+      renderMenuEditor('merch');
     });
 }
 
-function updateBgPreview() {
-  const val = document.getElementById('setBgImage').value;
-  if(val) {
-      document.getElementById('bgPreview').src = val;
-      document.getElementById('bgPreview').style.display = 'block';
+function renderAdminOrders(type) {
+  document.getElementById('btnViewCookie').classList.remove('active');
+  document.getElementById('btnViewMerch').classList.remove('active');
+  
+  const targetOrders = type === 'cookie' ? ORDERS : MERCH_ORDERS;
+  document.getElementById(type === 'cookie' ? 'btnViewCookie' : 'btnViewMerch').classList.add('active');
+
+  const list = document.getElementById('adminOrdersList');
+  if(targetOrders.length === 0) {
+    list.innerHTML = `<p style="text-align:center; color:#888;">ยังไม่มีออเดอร์ในหมวดนี้</p>`;
   } else {
-      document.getElementById('bgPreview').style.display = 'none';
+    list.innerHTML = targetOrders.map(o => `
+      <div class="order-card">
+        <div class="time">${o.time}</div>
+        <div class="name">${o.name}</div>
+        <div class="phone">📞 ${o.phone}</div>
+        <div class="address">${o.address.replace(/\n/g,'<br>')}</div>
+        <div class="items">${o.items}</div>
+        <div style="font-size:1.1rem; color:var(--cookie); font-weight:bold; margin-top:10px;">Grand Total: ฿${o.total.toLocaleString()}</div>
+        ${o.notes ? `<div style="font-size:0.9rem; color:#888; margin-top:5px;">📝 ${o.notes}</div>` : ''}
+      </div>
+    `).join('');
   }
 }
 
+// 🌟 ย่อรูปภาพพื้นหลัง 🌟
 function compressBgImage(event) {
   const file = event.target.files[0];
   if(!file) return;
@@ -496,14 +538,13 @@ function compressBgImage(event) {
     const img = new Image();
     img.onload = function() {
       const canvas = document.createElement('canvas');
-      const MAX_WIDTH = 1920; 
-      let scaleSize = 1;
-      if (img.width > MAX_WIDTH) scaleSize = MAX_WIDTH / img.width;
-      canvas.width = img.width * scaleSize;
-      canvas.height = img.height * scaleSize;
+      const MAX_WIDTH = 1200; 
+      let width = img.width; let height = img.height;
+      if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+      canvas.width = width; canvas.height = height;
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL('image/webp', 0.85);
+      ctx.drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL('image/webp', 0.6);
       document.getElementById('bgPreview').src = dataUrl;
       document.getElementById('bgPreview').style.display = 'block';
       document.getElementById('setBgImage').value = dataUrl;
@@ -513,38 +554,47 @@ function compressBgImage(event) {
   reader.readAsDataURL(file);
 }
 
+function updateBgPreview() {
+  const val = document.getElementById('setBgImage').value;
+  if(val) { document.getElementById('bgPreview').src = val; document.getElementById('bgPreview').style.display = 'block'; } 
+  else { document.getElementById('bgPreview').style.display = 'none'; }
+}
+
 function clearBgImage() {
   document.getElementById('bgPreview').style.display = 'none';
   document.getElementById('setBgImage').value = '';
   document.getElementById('bgFileInput').value = '';
 }
 
-function renderMenuEditor() {
-  const container = document.getElementById('menuEditorList');
-  container.innerHTML = MENU.map((m, index) => {
+// 🌟 จัดการเมนู 2 หมวด 🌟
+function renderMenuEditor(type) {
+  const container = document.getElementById(type === 'cookie' ? 'menuEditorList_cookie' : 'menuEditorList_merch');
+  const targetMenu = type === 'cookie' ? MENU : MERCH_MENU;
+
+  container.innerHTML = targetMenu.map((m, index) => {
     const imgSrc = m.image ? m.image : 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
     return `
     <div class="edit-menu-row">
       <div class="img-upload-box">
-        <img src="${imgSrc}" class="img-preview" id="preview-${index}">
-        <input type="file" style="width:100%; font-size:0.8rem; margin-top:5px;" accept="image/*" onchange="compressAndPreview(event, ${index})">
-        <input type="hidden" class="m-image" id="b64-${index}" value="${m.image || ''}">
+        <img src="${imgSrc}" class="img-preview" id="preview-${type}-${index}">
+        <input type="text" placeholder="วางลิงก์รูปลงที่นี่" class="m-image" id="url-${type}-${index}" value="${m.image || ''}" style="font-size:0.8rem; margin-bottom:5px;" oninput="document.getElementById('preview-${type}-${index}').src=this.value">
+        <input type="file" style="width:100%; font-size:0.8rem;" accept="image/*" onchange="compressAndPreview(event, ${index}, '${type}')">
       </div>
       <div style="display:flex; flex-direction:column; gap:8px;">
-        <input type="text" placeholder="ชื่อเมนู" value="${m.name}" class="m-name" style="padding:8px;">
+        <input type="text" placeholder="ชื่อรายการ" value="${m.name}" class="m-name" style="padding:8px;">
         <input type="text" placeholder="คำอธิบาย..." value="${m.desc}" class="m-desc" style="padding:8px;">
         <input type="hidden" value="${m.id}" class="m-id">
       </div>
       <div style="display:flex; flex-direction:column; gap:8px;">
         <input type="number" placeholder="ราคา" value="${m.price}" class="m-price" style="width:100%; padding:8px;">
-        <button class="del-btn" onclick="removeMenuItem(${index})">ลบเมนูนี้</button>
+        <button class="del-btn" onclick="removeMenuItem(${index}, '${type}')">ลบรายการนี้</button>
       </div>
     </div>
     `;
   }).join('');
 }
 
-function compressAndPreview(event, index) {
+function compressAndPreview(event, index, type) {
   const file = event.target.files[0];
   if(!file) return;
   const reader = new FileReader();
@@ -552,30 +602,32 @@ function compressAndPreview(event, index) {
     const img = new Image();
     img.onload = function() {
       const canvas = document.createElement('canvas');
-      const MAX_WIDTH = 400; 
-      const scaleSize = MAX_WIDTH / img.width;
-      canvas.width = MAX_WIDTH;
-      canvas.height = img.height * scaleSize;
+      const MAX_WIDTH = 300; 
+      let width = img.width; let height = img.height;
+      if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+      canvas.width = width; canvas.height = height;
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL('image/webp', 0.85); 
-      document.getElementById('preview-' + index).src = dataUrl;
-      document.getElementById('b64-' + index).value = dataUrl;
+      ctx.drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL('image/webp', 0.65); 
+      document.getElementById(`preview-${type}-${index}`).src = dataUrl;
+      document.getElementById(`url-${type}-${index}`).value = dataUrl;
     }
     img.src = e.target.result;
   }
   reader.readAsDataURL(file);
 }
 
-function addMenuItem() {
-  MENU.push({ id: 'm' + Date.now(), image: '', name: '', desc: '', price: 0 });
-  renderMenuEditor();
+function addMenuItem(type) {
+  if(type === 'cookie') MENU.push({ id: 'c' + Date.now(), image: '', name: '', desc: '', price: 0 });
+  else MERCH_MENU.push({ id: 'p' + Date.now(), image: '', name: '', desc: '', price: 0 });
+  renderMenuEditor(type);
 }
 
-function removeMenuItem(index) {
-  if(confirm("แน่ใจหรือไม่ที่จะลบเมนูนี้?")) {
-    MENU.splice(index, 1);
-    renderMenuEditor();
+function removeMenuItem(index, type) {
+  if(confirm("แน่ใจหรือไม่ที่จะลบรายการนี้?")) {
+    if(type === 'cookie') MENU.splice(index, 1);
+    else MERCH_MENU.splice(index, 1);
+    renderMenuEditor(type);
   }
 }
 
@@ -593,19 +645,26 @@ function saveAdminSettings() {
     bgImage: document.getElementById('setBgImage').value
   };
 
-  const newMenu = [];
-  const rows = document.querySelectorAll('.edit-menu-row');
-  rows.forEach((row) => {
-    newMenu.push({
-      id: row.querySelector('.m-id').value,
-      image: row.querySelector('.m-image').value,
-      name: row.querySelector('.m-name').value,
-      price: Number(row.querySelector('.m-price').value),
-      desc: row.querySelector('.m-desc').value
+  const getMenuData = (containerId) => {
+    const arr = [];
+    document.querySelectorAll(`#${containerId} .edit-menu-row`).forEach((row) => {
+      arr.push({
+        id: row.querySelector('.m-id').value,
+        image: row.querySelector('.m-image').value,
+        name: row.querySelector('.m-name').value,
+        price: Number(row.querySelector('.m-price').value),
+        desc: row.querySelector('.m-desc').value
+      });
     });
-  });
+    return arr;
+  };
 
-  const payload = { action: "saveAdminSettings", settings: newSettings, menu: newMenu };
+  const payload = { 
+    action: "saveAdminSettings", 
+    settings: newSettings, 
+    menu: getMenuData('menuEditorList_cookie'),
+    merchMenu: getMenuData('menuEditorList_merch')
+  };
 
   fetch(API_URL, {
     method: "POST",
@@ -617,9 +676,14 @@ function saveAdminSettings() {
     btn.textContent = "Save All Settings & Menu";
     alert("บันทึกการตั้งค่าเรียบร้อยแล้วค่ะ!");
     SHOP_SETTINGS = newSettings;
-    MENU = newMenu;
+    MENU = payload.menu;
+    MERCH_MENU = payload.merchMenu;
     applyShopSettings();
-    renderMenu();
+    
+    // ถ้าหน้าจอปัจจุบันอยู่หน้าสั่งของ ให้เรนเดอร์เมนูใหม่ด้วย
+    if(document.getElementById('orderPage').classList.contains('active')){
+      renderMenu(); 
+    }
   }).catch(() => {
     alert("Error saving settings.");
     btn.disabled = false;
