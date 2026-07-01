@@ -63,10 +63,11 @@ input:focus, textarea:focus, select:focus { border-color:var(--cookie); backgrou
 .radio-label.active { border-color:var(--cookie); background:#fffbf5; box-shadow:0 2px 8px rgba(0,0,0,0.05); font-weight:bold; color:var(--cookie); }
 
 .btn { width:100%; padding:16px; border-radius:12px; font-family:'Itim', cursive; font-size:1.15rem; cursor:pointer; transition:0.2s; margin-bottom:10px; border:none; text-align:center; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .btn-primary { background:var(--cookie); color:#fff; }
-.btn-primary:hover { filter:brightness(0.9); transform:translateY(-2px); }
+.btn-primary:hover:not(:disabled) { filter:brightness(0.9); transform:translateY(-2px); }
 .btn-secondary { background:none; color:var(--mid); border:1.5px solid var(--light); }
-.btn-secondary:hover { border-color:var(--cookie); color:var(--cookie); }
+.btn-secondary:hover:not(:disabled) { border-color:var(--cookie); color:var(--cookie); }
 .btn-small { padding:8px 12px; font-size:0.9rem; border-radius:8px; }
 
 .r-box { background:#fff; border:1.5px dashed var(--cookie); border-radius:16px; padding:20px; margin-bottom:20px; }
@@ -211,7 +212,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   </div>
 
   <button class="btn btn-primary" id="btnConfirm" onclick="confirmOrder()">ยืนยันและสั่งซื้อ</button>
-  <button class="btn btn-secondary" onclick="showPage('shippingPage')">กลับไปแก้ไขข้อมูล</button>
+  <button class="btn btn-secondary" id="btnCancelReview" onclick="showPage('shippingPage')">กลับไปแก้ไขข้อมูล</button>
 </div>
 
 <div id="payBalancePage" class="page container">
@@ -227,7 +228,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
     <div class="field"><label>ยอดเงินที่โอนเพิ่ม (฿) *</label><input type="number" id="bamount" placeholder="ยอดเงินส่วนที่เหลือ"></div>
     <div class="field"><label>หมายเหตุ(optional)</label><input type="text" id="bnotes" placeholder="สิ่งที่อยากบอกอารินะ"></div>
   </div>
-  <button class="btn btn-primary" style="background:var(--green);" onclick="submitBalance()">แจ้งโอนเงิน ✦</button>
+  <button class="btn btn-primary" id="btnSubmitBalance" style="background:var(--green);" onclick="submitBalance()">แจ้งโอนเงิน ✦</button>
 </div>
 
 <div id="thankPage" class="page container" style="text-align:center; padding-top:40px;">
@@ -346,7 +347,6 @@ let cartMerch = {};
 let currentMode = "cookie"; 
 let currentOrder = null;
 
-// ฟังก์ชันแยกไซส์สินค้า
 function parseSizes(sizeStr) {
   if (!sizeStr) return [];
   return sizeStr.split(',').map(s => {
@@ -631,7 +631,9 @@ function updatePaymentMode() {
 
 function confirmOrder() {
   const btn = document.getElementById('btnConfirm');
+  const cancelBtn = document.getElementById('btnCancelReview');
   btn.disabled = true;
+  if(cancelBtn) cancelBtn.disabled = true;
   btn.textContent = "กำลังส่งออเดอร์...";
   
   document.getElementById('thankYouTotal').textContent = '฿' + currentOrder.paidAmount.toLocaleString();
@@ -639,8 +641,17 @@ function confirmOrder() {
   document.getElementById('tySubtitle').textContent = "ได้รับออเดอร์แล้ว ขอบคุณที่อุดหนุนอารินะนะคะ♥";
 
   fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(currentOrder) })
-  .then(() => { btn.disabled = false; btn.textContent = "ยืนยันและสั่งซื้อ"; showPage('thankPage'); })
-  .catch(() => { alert("บันทึกออฟไลน์เรียบร้อย"); btn.disabled = false; btn.textContent = "ยืนยันและสั่งซื้อ"; showPage('thankPage'); });
+  .then(() => { 
+      btn.disabled = false; btn.textContent = "ยืนยันและสั่งซื้อ"; 
+      if(cancelBtn) cancelBtn.disabled = false;
+      showPage('thankPage'); 
+  })
+  .catch(() => { 
+      alert("บันทึกออฟไลน์เรียบร้อย"); 
+      btn.disabled = false; btn.textContent = "ยืนยันและสั่งซื้อ"; 
+      if(cancelBtn) cancelBtn.disabled = false;
+      showPage('thankPage'); 
+  });
 }
 
 function submitBalance() {
@@ -652,6 +663,13 @@ function submitBalance() {
 
   if(!name || !phone || !email || amount <= 0) return alert('กรุณากรอกชื่อ, อีเมล, เบอร์โทร และยอดเงินที่โอนให้ครบถ้วนค่ะ');
   
+  // ล็อกปุ่มเพื่อป้องกันการกดเบิ้ล
+  const btn = document.getElementById('btnSubmitBalance');
+  if(btn) {
+    btn.disabled = true;
+    btn.textContent = "กำลังส่งข้อมูล...";
+  }
+
   const payload = { action: "payBalance", time: new Date().toLocaleString('th-TH'), name, phone, email, amount, notes };
 
   document.getElementById('thankYouTotal').textContent = '฿' + amount.toLocaleString();
@@ -659,8 +677,14 @@ function submitBalance() {
   document.getElementById('tySubtitle').textContent = "รับทราบยอดโอนคงเหลือแล้วค่ะ ขอบคุณนะคะ♥";
 
   fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
-  .then(() => { showPage('thankPage'); })
-  .catch(() => { showPage('thankPage'); });
+  .then(() => { 
+      if(btn) { btn.disabled = false; btn.textContent = "แจ้งโอนเงิน ✦"; }
+      showPage('thankPage'); 
+  })
+  .catch(() => { 
+      if(btn) { btn.disabled = false; btn.textContent = "แจ้งโอนเงิน ✦"; }
+      showPage('thankPage'); 
+  });
 }
 
 function resetAndGoHome() {
