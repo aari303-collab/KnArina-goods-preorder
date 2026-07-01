@@ -346,8 +346,20 @@ let cartMerch = {};
 let currentMode = "cookie"; 
 let currentOrder = null;
 
+// ฟังก์ชันแยกไซส์สินค้า
+function parseSizes(sizeStr) {
+  if (!sizeStr) return [];
+  return sizeStr.split(',').map(s => {
+    let parts = s.split(':');
+    if (parts.length === 2) {
+      return { name: parts[0].trim(), price: Number(parts[1].trim()) };
+    }
+    return null;
+  }).filter(s => s !== null && !isNaN(s.price));
+}
+
 window.onload = () => {
-  //if (API_URL === "ใส่ลิงก์_WEB_APP_URL_ของคูณเบลล์ตรงนี้") return alert("อย่าลืมใส่ API_URL นะคะ 🤎");
+  if (API_URL === "ใส่ลิงก์_WEB_APP_URL_ของคูณเบลล์ตรงนี้") return alert("อย่าลืมใส่ API_URL นะคะ 🤎");
   fetch(`${API_URL}?action=getShopData`)
     .then(res => res.json())
     .then(data => {
@@ -394,27 +406,79 @@ function selectMode(mode) {
   showPage('orderPage');
 }
 
-// 🌟 แบบไม่มี Options
 function renderMenu() {
   const targetMenu = currentMode === 'cookie' ? MENU : MERCH_MENU;
   const targetCart = currentMode === 'cookie' ? cartCookie : cartMerch;
 
   document.getElementById('menuList').innerHTML = targetMenu.map(m => {
+    const sizes = parseSizes(m.sizes);
     const imgHtml = m.image ? `<img src="${m.image}" class="item-img">` : `<div class="item-img">${currentMode === 'cookie'?'🍪':'✨'}</div>`;
-    return `
-    <div class="item-row ${targetCart[m.id] ? 'selected' : ''}" id="row-${m.id}" onclick="toggleItem('${m.id}')">
-      ${imgHtml}
-      <div class="item-info">
-        <strong>${m.name}</strong><span>${m.desc}</span>
-        <div class="qty-wrap" style="${targetCart[m.id] ? 'display:flex;' : 'display:none;'}" onclick="event.stopPropagation()">
-          <div class="qbtn" onclick="changeQty('${m.id}',-1)">-</div>
-          <div class="qnum" id="q-${m.id}">${targetCart[m.id] || 1}</div>
-          <div class="qbtn" onclick="changeQty('${m.id}',1)">+</div>
-        </div>
-      </div>
-      <div class="item-price">฿${m.price}</div>
-    </div>`;
+
+    if (sizes.length > 0) {
+        let sizesHtml = sizes.map(sz => {
+            let cartKey = `${m.id}|${sz.name}`;
+            let isSelected = !!targetCart[cartKey];
+            return `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding:10px; border:1px dashed var(--light); border-radius:10px; background:${isSelected ? '#fffbf5' : '#fff'}; transition:0.2s;">
+                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; flex:1; margin:0;">
+                    <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleSizeItem('${m.id}', '${sz.name}')" style="accent-color:var(--cookie); transform:scale(1.3);">
+                    <span style="font-size:1.05rem;">${sz.name} <strong style="color:var(--cookie); margin-left:5px;">฿${sz.price}</strong></span>
+                </label>
+                <div class="qty-wrap" style="${isSelected ? 'display:flex;' : 'display:none;'} margin-top:0;">
+                    <div class="qbtn" onclick="changeSizeQty('${m.id}', '${sz.name}', -1)">-</div>
+                    <div class="qnum">${targetCart[cartKey] || 1}</div>
+                    <div class="qbtn" onclick="changeSizeQty('${m.id}', '${sz.name}', 1)">+</div>
+                </div>
+            </div>`;
+        }).join('');
+
+        return `
+        <div class="item-row" style="flex-direction:column; align-items:stretch; cursor:default;" id="row-${m.id}">
+          <div style="display:flex; gap:14px; align-items:center;">
+              ${imgHtml}
+              <div class="item-info">
+                <strong>${m.name}</strong><span>${m.desc}</span>
+              </div>
+          </div>
+          <div style="margin-top:5px;">${sizesHtml}</div>
+        </div>`;
+    } else {
+        let isSelected = !!targetCart[m.id];
+        return `
+        <div class="item-row ${isSelected ? 'selected' : ''}" id="row-${m.id}" onclick="toggleItem('${m.id}')">
+          ${imgHtml}
+          <div class="item-info">
+            <strong>${m.name}</strong><span>${m.desc}</span>
+            <div class="qty-wrap" style="${isSelected ? 'display:flex;' : 'display:none;'}" onclick="event.stopPropagation()">
+              <div class="qbtn" onclick="changeQty('${m.id}',-1)">-</div>
+              <div class="qnum" id="q-${m.id}">${targetCart[m.id] || 1}</div>
+              <div class="qbtn" onclick="changeQty('${m.id}',1)">+</div>
+            </div>
+          </div>
+          <div class="item-price">฿${m.price}</div>
+        </div>`;
+    }
   }).join('');
+}
+
+function toggleSizeItem(id, sizeName) {
+    const targetCart = currentMode === 'cookie' ? cartCookie : cartMerch;
+    const cartKey = `${id}|${sizeName}`;
+    if (targetCart[cartKey]) delete targetCart[cartKey];
+    else targetCart[cartKey] = 1;
+    renderMenu();
+}
+
+function changeSizeQty(id, sizeName, delta) {
+    const targetCart = currentMode === 'cookie' ? cartCookie : cartMerch;
+    const cartKey = `${id}|${sizeName}`;
+    if (!targetCart[cartKey]) {
+        if(delta > 0) targetCart[cartKey] = delta;
+    } else {
+        targetCart[cartKey] += delta;
+        if (targetCart[cartKey] <= 0) delete targetCart[cartKey];
+    }
+    renderMenu();
 }
 
 function toggleItem(id) {
@@ -471,9 +535,17 @@ function goToReview() {
   const targetCart = currentMode === 'cookie' ? cartCookie : cartMerch;
   const targetMenu = currentMode === 'cookie' ? MENU : MERCH_MENU;
   
-  const items = Object.entries(targetCart).map(([id, qty]) => {
-    const m = targetMenu.find(x => x.id === id);
-    return { name: m.name, qty, price: m.price, subtotal: m.price*qty };
+  const items = Object.entries(targetCart).map(([cartKey, qty]) => {
+    if (cartKey.includes('|')) {
+        const [baseId, sizeName] = cartKey.split('|');
+        const m = targetMenu.find(x => x.id === baseId);
+        const sizeObj = parseSizes(m.sizes).find(s => s.name === sizeName);
+        const price = sizeObj ? sizeObj.price : m.price;
+        return { name: `${m.name} (${sizeName})`, qty: qty, price: price, subtotal: price * qty };
+    } else {
+        const m = targetMenu.find(x => x.id === cartKey);
+        return { name: m.name, qty: qty, price: m.price, subtotal: m.price * qty };
+    }
   });
   
   const subtotal = items.reduce((s, i) => s+i.subtotal, 0);
@@ -762,10 +834,11 @@ function renderMenuEditor(type) {
       <div style="display:flex; flex-direction:column; gap:8px;">
         <input type="text" placeholder="ชื่อรายการ" value="${m.name}" class="m-name" style="padding:8px;">
         <input type="text" placeholder="คำอธิบาย..." value="${m.desc}" class="m-desc" style="padding:8px;">
+        <input type="text" placeholder="ขนาดและราคา (เช่น S:100, M:150)" value="${m.sizes || ''}" class="m-sizes" style="padding:8px; border:1.5px dashed var(--cookie); border-radius:8px;">
         <input type="hidden" value="${m.id}" class="m-id">
       </div>
       <div style="display:flex; flex-direction:column; gap:8px;">
-        <input type="number" placeholder="ราคา" value="${m.price}" class="m-price" style="width:100%; padding:8px;">
+        <input type="number" placeholder="ราคาปกติ (ถ้ามีขนาดให้ใส่ 0 ได้เลย)" value="${m.price}" class="m-price" style="width:100%; padding:8px;">
         <button class="del-btn" onclick="removeMenuItem(${index}, '${type}')">ลบรายการนี้</button>
       </div>
     </div>
@@ -797,8 +870,8 @@ function compressAndPreview(event, index, type) {
 }
 
 function addMenuItem(type) {
-  if(type === 'cookie') MENU.push({ id: 'c' + Date.now(), image: '', name: '', desc: '', price: 0 });
-  else MERCH_MENU.push({ id: 'p' + Date.now(), image: '', name: '', desc: '', price: 0 });
+  if(type === 'cookie') MENU.push({ id: 'c' + Date.now(), image: '', name: '', desc: '', price: 0, sizes: '' });
+  else MERCH_MENU.push({ id: 'p' + Date.now(), image: '', name: '', desc: '', price: 0, sizes: '' });
   renderMenuEditor(type);
 }
 
@@ -833,7 +906,8 @@ function saveAdminSettings() {
         image: row.querySelector('.m-image').value,
         name: row.querySelector('.m-name').value,
         price: Number(row.querySelector('.m-price').value),
-        desc: row.querySelector('.m-desc').value
+        desc: row.querySelector('.m-desc').value,
+        sizes: row.querySelector('.m-sizes').value
       });
     });
     return arr;
