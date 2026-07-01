@@ -101,6 +101,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <h3 style="color:var(--cookie); font-family:'Lora'">Loading Shop...</h3>
 </div>
 
+<!-- หน้า 1: เลือกระบบ -->
 <div id="selectPage" class="page container active">
   <div class="header">
     <h1 id="uiShopNameMain">Arina Shop</h1>
@@ -127,6 +128,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   </div>
 </div>
 
+<!-- หน้า 2: เลือกสินค้า -->
 <div id="orderPage" class="page container">
   <button class="btn-secondary btn-small" style="margin-bottom:20px;" onclick="showPage('selectPage')">← ย้อนกลับ</button>
   <div class="header">
@@ -137,6 +139,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-primary" onclick="goToShipping()">ถัดไป (กรอกข้อมูลจัดส่ง) ✦</button>
 </div>
 
+<!-- หน้า 3: ข้อมูลจัดส่ง -->
 <div id="shippingPage" class="page container">
   <button class="btn-secondary btn-small" style="margin-bottom:20px;" onclick="showPage('orderPage')">← ย้อนกลับไปเลือกสินค้า</button>
   <div class="header">
@@ -167,6 +170,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-primary" onclick="goToReview()">ตรวจสอบออเดอร์ (Review) ✦</button>
 </div>
 
+<!-- หน้า 4: Review และเลือกวิธีชำระเงิน -->
 <div id="reviewPage" class="page container">
   <div class="header"><h1>Review <em>Order</em></h1></div>
   <div class="r-box">
@@ -174,6 +178,12 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
     <div id="reviewItems" style="margin-bottom:10px;"></div>
     <div class="r-shipping"><span>ค่าสินค้า (Subtotal)</span><span id="reviewSubtotal">฿0</span></div>
     <div class="r-shipping" style="border:none;"><span>ค่าจัดส่ง (Shipping)</span><span id="reviewShipping">฿0</span></div>
+    
+    <!-- 🌟 ส่วนแสดงบัตรสุ่มขนม 🌟 -->
+    <div class="r-shipping" style="border:none; padding-top:10px; border-top:1px dashed var(--light); display:none;" id="reviewCardsArea">
+      <span style="color:var(--green); font-weight:bold;">🎟️ บัตรสุ่มขนมที่ได้รับ</span>
+      <span id="reviewCards" style="color:var(--green); font-weight:bold; font-size:1.2rem;">0 ใบ</span>
+    </div>
   </div>
 
   <div class="form-section">
@@ -187,7 +197,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
       </label>
     </div>
     <div id="depositWarning" style="display:none; font-size:0.9rem; color:var(--red); margin-top:10px; line-height:1.4; background:#fbe4e9; padding:10px; border-radius:8px;">
-      ⚠️ <b>เงื่อนไขมัดจำ:</b> ขอสงวนสิทธิ์ไม่คืนเงินหากยกเลิกออเดอร์หลังวันที่ 14 และร้านจะจัดส่งสินค้าเมื่อชำระส่วนที่เหลือครบถ้วนแล้วเท่านั้นค่ะ
+      ⚠️ <b>เงื่อนไขมัดจำ:</b> ขอสงวนสิทธิ์ไม่คืนเงินหากยกเลิกออเดอร์หลังวันที่ 14 ก.ค.ค่ะ และอารินะจะจัดส่งสินค้าเมื่อชำระส่วนที่เหลือครบถ้วนแล้วเท่านั้นค่ะ
     </div>
   </div>
 
@@ -205,6 +215,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-secondary" onclick="showPage('shippingPage')">กลับไปแก้ไขข้อมูล</button>
 </div>
 
+<!-- หน้าจ่ายส่วนที่เหลือ (Balance) -->
 <div id="payBalancePage" class="page container">
   <button class="btn-secondary btn-small" style="margin-bottom:20px;" onclick="showPage('selectPage')">← ย้อนกลับ</button>
   <div class="header">
@@ -214,13 +225,14 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <div class="form-section" style="border-color:var(--green);">
     <div class="field"><label>ชื่อ-นามสกุลที่สั่งซื้อ *</label><input type="text" id="bname" placeholder="ชื่อที่ใช้สั่งซื้อออเดอร์"></div>
     <div class="field"><label>อีเมล (Email) *</label><input type="email" id="bemail" placeholder="example@email.com"></div>
-    <div class="field"><label>เบอร์โทรศัพท์ / LINE ID *</label><input type="text" id="bphone" placeholder="ช่องทางการติดต่อ"></div>
+    <div class="field"><label>เบอร์โทรศัพท์*</label><input type="text" id="bphone" placeholder="ช่องทางการติดต่อ"></div>
     <div class="field"><label>ยอดเงินที่โอนเพิ่ม (฿) *</label><input type="number" id="bamount" placeholder="ยอดเงินส่วนที่เหลือ"></div>
-    <div class="field"><label>หมายเหตุ / รหัสออเดอร์ (optional)</label><input type="text" id="bnotes" placeholder="เผื่อแม่ค้าหาง่ายขึ้นค่ะ"></div>
+    <div class="field"><label>หมายเหตุ / รหัสออเดอร์ (optional)</label><input type="text" id="bnotes" placeholder="เผื่ออารินะหาง่ายขึ้นค่ะ"></div>
   </div>
   <button class="btn btn-primary" style="background:var(--green);" onclick="submitBalance()">แจ้งโอนเงิน ✦</button>
 </div>
 
+<!-- หน้า 5: Thank You (Eazy Donate) -->
 <div id="thankPage" class="page container" style="text-align:center; padding-top:40px;">
   <div style="font-size:4rem; margin-bottom:10px;">🤎</div>
   <h2 style="font-family:'Lora'; margin-bottom:10px;" id="tyTitle">Order Received!</h2>
@@ -243,6 +255,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-secondary" onclick="resetAndGoHome()">กลับหน้าแรก</button>
 </div>
 
+<!-- ระบบ Admin -->
 <div id="adminLoginPage" class="page container">
   <div class="admin-login-box">
     <h2 style="font-family: 'Lora';">Admin Access</h2>
@@ -286,14 +299,12 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
     <div class="form-section">
       <div class="section-label">Shop Settings</div>
       <div class="field"><label>สถานะร้าน (ภาพรวม)</label><select id="setIsOpen"><option value="true">🟢 เปิดร้าน (ออนไลน์)</option><option value="false">🔴 ปิดร้าน (ซ่อนทุกโหมด)</option></select></div>
-      
       <div class="field"><label>สถานะร้านขนม/คุกกี้ (แยกต่างหาก)</label>
         <select id="setIsCookieOpen">
           <option value="true">🟢 เปิดรับออเดอร์ขนม</option>
           <option value="false">🔴 ปิดรับออเดอร์ขนมชั่วคราว</option>
         </select>
       </div>
-      
       <div class="field"><label>ชื่อร้าน</label><input type="text" id="setShopName"></div>
       <div class="field"><label>ข้อความต้อนรับ</label><textarea id="setShopDesc"></textarea></div>
       <div class="field"><label>ค่าจัดส่ง (฿) - ฟรีถ้ารับงาน Vworld</label><input type="number" id="setShippingFee"></div>
@@ -364,7 +375,6 @@ function applyShopSettings() {
     document.getElementById('closedBanner').style.display = 'none';
     document.getElementById('selectModesArea').style.display = 'flex';
     
-    // 🌟 ระบบล็อคปุ่มร้านขนม ถ้าตั้งค่าปิดร้านขนม 🌟
     const btnCookie = document.getElementById('btnModeCookie');
     if(SHOP_SETTINGS.isCookieOpen === false) {
       btnCookie.style.opacity = '0.5';
@@ -470,6 +480,10 @@ function goToReview() {
   });
   
   const subtotal = items.reduce((s, i) => s+i.subtotal, 0);
+  
+  // 🌟 คำนวณจำนวนบัตรสุ่มขนมจากยอดสินค้า (ทุก 250 บาท = 1 ใบ)
+  const randomCards = Math.floor(subtotal / 250);
+  
   const shipping = delivMethod === 'shipping' ? (Number(SHOP_SETTINGS.shippingFee) || 0) : 0;
   const grandTotal = subtotal + shipping;
 
@@ -480,7 +494,7 @@ function goToReview() {
     action: "newOrder", orderType: currentMode,
     time: new Date().toLocaleString('th-TH'),
     name, phone, email, address: delivMethod === 'shipping' ? `[จัดส่ง] ${address}` : `[รับที่งาน Vworld]`, notes, 
-    items: itemsForDb, total: grandTotal
+    items: itemsForDb, total: grandTotal, randomCards: randomCards // เพิ่มลง payload
   };
 
   document.getElementById('reviewItems').innerHTML = items.map(it => 
@@ -489,10 +503,17 @@ function goToReview() {
   document.getElementById('reviewSubtotal').textContent = `฿${subtotal}`;
   document.getElementById('reviewShipping').textContent = shipping === 0 ? "ฟรี (Free)" : `฿${shipping}`;
   
+  // 🌟 โชว์บัตรสุ่มขนมในหน้า Review
+  if(randomCards > 0) {
+    document.getElementById('reviewCardsArea').style.display = 'flex';
+    document.getElementById('reviewCards').textContent = randomCards + " ใบ";
+  } else {
+    document.getElementById('reviewCardsArea').style.display = 'none';
+  }
+  
   if(delivMethod === 'shipping') document.getElementById('reviewAddress').innerHTML = "📍 จัดส่งถึงบ้าน:<br>" + address.replace(/\n/g,'<br>');
   else document.getElementById('reviewAddress').innerHTML = "🎪 <b>รับสินค้าด้วยตัวเองที่งาน Vworld</b>";
   
-  // โชว์อีเมลในหน้า Review ด้วย
   document.getElementById('reviewContact').innerHTML = `${name} <br><span style="font-size:0.9rem; font-weight:normal; color:var(--mid);">📞 ${phone} | ✉️ ${email}</span>`;
 
   updatePaymentMode(); 
@@ -669,6 +690,9 @@ function renderAdminOrders(type) {
         paymentStatus = `<div style="color:var(--green); margin-top:10px; font-size:0.9rem;"><b>✔️ ${o.paymentType}</b></div>`;
       }
 
+      // 🌟 โชว์บัตรสุ่มในหลังบ้านถ้ามี 🌟
+      let cardBadge = o.randomCards > 0 ? `<div style="font-size:0.95rem; color:var(--green); margin-top:5px; font-weight:bold; background:#e8f5e9; padding:5px 10px; border-radius:5px; display:inline-block;">🎟️ บัตรสุ่มขนม: ${o.randomCards} ใบ</div>` : '';
+
       return `
       <div class="order-card">
         <div class="time">${o.time}</div>
@@ -678,6 +702,7 @@ function renderAdminOrders(type) {
         <div class="items">${o.items}</div>
         <div style="font-size:1.1rem; font-weight:bold; margin-top:10px;">Grand Total: ฿${Number(o.total).toLocaleString()}</div>
         ${paymentStatus}
+        ${cardBadge}
         ${o.notes ? `<div style="font-size:0.9rem; color:#888; margin-top:5px;">📝 ${o.notes}</div>` : ''}
       </div>
     `}).join('');
