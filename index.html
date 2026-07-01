@@ -44,7 +44,6 @@ body { font-family:'Itim', cursive; background:var(--cream); color:var(--dark); 
 .item-info span { font-size:0.9rem; color:var(--mid); line-height:1.3; display:block; }
 .item-price { color:var(--cookie); font-size:1.1rem; font-weight:bold; }
 
-/* ดีไซน์ Dropdown เลือกแบบสินค้า */
 .item-opt-select { margin-top:6px; padding:6px 10px; border-radius:8px; font-family:'Itim', cursive; font-size:0.95rem; border:1.5px solid var(--cookie); background:#fff; color:var(--dark); outline:none; max-width:100%; width: 100%; cursor:pointer; }
 
 .qty-wrap { display:none; align-items:center; gap:8px; margin-top:8px; }
@@ -104,6 +103,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <h3 style="color:var(--cookie); font-family:'Lora'">Loading Shop...</h3>
 </div>
 
+<!-- หน้า 1: เลือกระบบ -->
 <div id="selectPage" class="page container active">
   <div class="header">
     <h1 id="uiShopNameMain">Arina Shop</h1>
@@ -130,6 +130,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   </div>
 </div>
 
+<!-- หน้า 2: เลือกสินค้า -->
 <div id="orderPage" class="page container">
   <button class="btn-secondary btn-small" style="margin-bottom:20px;" onclick="showPage('selectPage')">← ย้อนกลับ</button>
   <div class="header">
@@ -140,6 +141,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-primary" onclick="goToShipping()">ถัดไป (กรอกข้อมูลจัดส่ง) ✦</button>
 </div>
 
+<!-- หน้า 3: ข้อมูลจัดส่ง -->
 <div id="shippingPage" class="page container">
   <button class="btn-secondary btn-small" style="margin-bottom:20px;" onclick="showPage('orderPage')">← ย้อนกลับไปเลือกสินค้า</button>
   <div class="header">
@@ -170,6 +172,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-primary" onclick="goToReview()">ตรวจสอบออเดอร์ (Review) ✦</button>
 </div>
 
+<!-- หน้า 4: Review และเลือกวิธีชำระเงิน -->
 <div id="reviewPage" class="page container">
   <div class="header"><h1>Review <em>Order</em></h1></div>
   <div class="r-box">
@@ -217,6 +220,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-secondary" onclick="showPage('shippingPage')">กลับไปแก้ไขข้อมูล</button>
 </div>
 
+<!-- หน้าจ่ายส่วนที่เหลือ (Balance) -->
 <div id="payBalancePage" class="page container">
   <button class="btn-secondary btn-small" style="margin-bottom:20px;" onclick="showPage('selectPage')">← ย้อนกลับ</button>
   <div class="header">
@@ -233,6 +237,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-primary" style="background:var(--green);" onclick="submitBalance()">แจ้งโอนเงิน ✦</button>
 </div>
 
+<!-- หน้า 5: Thank You (Eazy Donate) -->
 <div id="thankPage" class="page container" style="text-align:center; padding-top:40px;">
   <div style="font-size:4rem; margin-bottom:10px;">🤎</div>
   <h2 style="font-family:'Lora'; margin-bottom:10px;" id="tyTitle">Order Received!</h2>
@@ -334,8 +339,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
 
 <script>
 // ════════════════════════════════════════════════════════════
-// ⚠️ ใส่ลิงก์ Web App URL ของคุณเบลล์ที่นี่ค่ะ
-const API_URL = "https://script.google.com/macros/s/AKfycbwuDnms9rcXGIif9yoUMfs45FoVzXr2zG6-QPTPxarKFM2VPpkbXtOOCm7wHcPLfAh_/exec"; 
+const API_URL = "ใhttps://script.google.com/macros/s/AKfycbwuDnms9rcXGIif9yoUMfs45FoVzXr2zG6-QPTPxarKFM2VPpkbXtOOCm7wHcPLfAh_/exec"; 
 const ADMIN_PIN = "admin8616";
 // ════════════════════════════════════════════════════════════
 
@@ -348,7 +352,7 @@ let BALANCE_PAYMENTS = [];
 
 let cartCookie = {};
 let cartMerch = {};
-let selectedOptionsCookie = {}; // สำหรับเก็บตัวเลือกที่ถูกเลือก
+let selectedOptionsCookie = {}; 
 let selectedOptionsMerch = {};
 let currentMode = "cookie"; 
 let currentOrder = null;
@@ -401,7 +405,16 @@ function selectMode(mode) {
   showPage('orderPage');
 }
 
-// 🌟 อัปเกรดการ Render เมนู เพื่อรองรับตัวเลือกสินค้า 🌟
+// 🌟 ระบบตีความตัวเลือกและราคา 🌟
+function parseOptions(m) {
+  let optsRaw = m.options ? m.options.split(',').map(s=>s.trim()).filter(s=>s) : [];
+  return optsRaw.map(optStr => {
+    let parts = optStr.split('=');
+    if(parts.length > 1) return { name: parts[0].trim(), price: parseFloat(parts[1].trim()) || m.price };
+    return { name: optStr, price: m.price };
+  });
+}
+
 function renderMenu() {
   const targetMenu = currentMode === 'cookie' ? MENU : MERCH_MENU;
   const targetCart = currentMode === 'cookie' ? cartCookie : cartMerch;
@@ -410,29 +423,33 @@ function renderMenu() {
   document.getElementById('menuList').innerHTML = targetMenu.map(m => {
     const imgHtml = m.image ? `<img src="${m.image}" class="item-img">` : `<div class="item-img">${currentMode === 'cookie'?'🍪':'✨'}</div>`;
     
-    // จัดการตัวเลือก (ถ้ามี)
-    let opts = m.options ? m.options.split(',').map(s=>s.trim()).filter(s=>s) : [];
+    let parsedOpts = parseOptions(m);
     let currentOpt = targetOptions[m.id] || "";
-    if(opts.length > 0 && !currentOpt) {
-      currentOpt = opts[0];
+    
+    if(parsedOpts.length > 0 && !currentOpt) {
+      currentOpt = parsedOpts[0].name;
       targetOptions[m.id] = currentOpt;
     }
     
-    // สร้างคีย์ตะกร้าที่รวมตัวเลือก
-    let currentKey = opts.length > 0 ? `${m.id}@@${currentOpt}` : m.id;
+    let displayPrice = m.price;
+    if(parsedOpts.length > 0) {
+       let found = parsedOpts.find(o => o.name === currentOpt);
+       if(found) displayPrice = found.price;
+    }
+
+    let currentKey = parsedOpts.length > 0 ? `${m.id}@@${currentOpt}` : m.id;
     let currentQty = targetCart[currentKey] || 0;
     
-    // เช็กว่าแถวนี้มีการเลือกสินค้าไปหรือยัง (เพื่อใส่กรอบสีและโชว์ปุ่ม + -)
     let totalRowQty = 0;
     Object.keys(targetCart).forEach(k => {
       if(k === m.id || k.startsWith(m.id + "@@")) totalRowQty += targetCart[k];
     });
 
     let selectHtml = "";
-    if(opts.length > 0) {
+    if(parsedOpts.length > 0) {
       selectHtml = `
       <select class="item-opt-select" onchange="changeOption('${m.id}', this.value)" onclick="event.stopPropagation()">
-        ${opts.map(o => `<option value="${o}" ${o===currentOpt?'selected':''}>${o}</option>`).join('')}
+        ${parsedOpts.map(o => `<option value="${o.name}" ${o.name===currentOpt?'selected':''}>${o.name} (฿${o.price})</option>`).join('')}
       </select>`;
     }
 
@@ -448,7 +465,7 @@ function renderMenu() {
           <div class="qbtn" onclick="changeQty('${m.id}',1)">+</div>
         </div>
       </div>
-      <div class="item-price">฿${m.price}</div>
+      <div class="item-price">฿${displayPrice}</div>
     </div>`;
   }).join('');
 }
@@ -456,7 +473,7 @@ function renderMenu() {
 function changeOption(id, val) {
   const targetOptions = currentMode === 'cookie' ? selectedOptionsCookie : selectedOptionsMerch;
   targetOptions[id] = val;
-  renderMenu(); // รีเฟรชเพื่อโชว์ยอดตามตัวเลือกใหม่
+  renderMenu(); 
 }
 
 function toggleItem(id) {
@@ -485,7 +502,6 @@ function changeQty(id, delta) {
       targetCart[key] += delta;
       if (targetCart[key] <= 0) delete targetCart[key];
   }
-  
   renderMenu();
 }
 
@@ -525,12 +541,20 @@ function goToReview() {
   const targetCart = currentMode === 'cookie' ? cartCookie : cartMerch;
   const targetMenu = currentMode === 'cookie' ? MENU : MERCH_MENU;
   
-  // แปลงรายการในตะกร้า (รองรับตัวเลือก)
+  // จัดการดึงราคาตามตัวเลือก
   const items = Object.entries(targetCart).map(([key, qty]) => {
     const [id, opt] = key.split('@@');
     const m = targetMenu.find(x => x.id === id);
+    
+    let itemPrice = m.price;
+    if(opt && m.options) {
+       let parsedOpts = parseOptions(m);
+       let found = parsedOpts.find(o => o.name === opt);
+       if(found) itemPrice = found.price;
+    }
+
     const itemName = opt ? `${m.name} [${opt}]` : m.name;
-    return { name: itemName, qty, price:m.price, subtotal:m.price*qty };
+    return { name: itemName, qty, price: itemPrice, subtotal: itemPrice*qty };
   });
   
   const subtotal = items.reduce((s, i) => s+i.subtotal, 0);
@@ -819,10 +843,12 @@ function renderMenuEditor(type) {
       <div style="display:flex; flex-direction:column; gap:8px;">
         <input type="text" placeholder="ชื่อรายการ" value="${m.name}" class="m-name" style="padding:8px;">
         <input type="text" placeholder="คำอธิบาย..." value="${m.desc}" class="m-desc" style="padding:8px;">
-        <input type="text" placeholder="ตัวเลือก (คั่นด้วยลูกน้ำ เช่น ลาย A, ลาย B)" value="${m.options || ''}" class="m-options" style="padding:8px; font-size:0.85rem; border:1px solid var(--primary);">
+        <label style="font-size:0.9rem; font-weight:bold; color:var(--cookie);">ตัวเลือกสินค้า (ใส่ = เพื่อตั้งราคาต่างกัน)</label>
+        <input type="text" placeholder="เช่น 35x60cm=350, 40x90cm=450" value="${m.options || ''}" class="m-options" style="padding:8px; font-size:0.85rem; border:1px solid var(--cookie);">
         <input type="hidden" value="${m.id}" class="m-id">
       </div>
       <div style="display:flex; flex-direction:column; gap:8px;">
+        <label style="font-size:0.9rem; font-weight:bold;">ราคาหลัก (฿)</label>
         <input type="number" placeholder="ราคา" value="${m.price}" class="m-price" style="width:100%; padding:8px;">
         <button class="del-btn" onclick="removeMenuItem(${index}, '${type}')">ลบรายการนี้</button>
       </div>
@@ -892,7 +918,7 @@ function saveAdminSettings() {
         name: row.querySelector('.m-name').value,
         price: Number(row.querySelector('.m-price').value),
         desc: row.querySelector('.m-desc').value,
-        options: row.querySelector('.m-options').value // เก็บข้อมูลตัวเลือก
+        options: row.querySelector('.m-options').value
       });
     });
     return arr;
