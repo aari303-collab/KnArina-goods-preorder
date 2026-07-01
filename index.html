@@ -53,7 +53,7 @@ body { font-family:'Itim', cursive; background:var(--cream); color:var(--dark); 
 .form-section { background:#fff; border-radius:20px; padding:24px 20px; margin-bottom:18px; border:1.5px solid var(--light); }
 .field { margin-bottom:16px; }
 .field label { display:block; font-size:1.05rem; color:var(--mid); margin-bottom:8px; font-weight:bold;}
-input[type="text"], input[type="number"], textarea, select { width:100%; padding:12px; border:1.5px solid var(--light); border-radius:10px; font-family:'Itim', cursive; font-size:1rem; background:var(--cream); outline:none; transition:0.2s; }
+input[type="text"], input[type="number"], input[type="email"], textarea, select { width:100%; padding:12px; border:1.5px solid var(--light); border-radius:10px; font-family:'Itim', cursive; font-size:1rem; background:var(--cream); outline:none; transition:0.2s; }
 input:focus, textarea:focus, select:focus { border-color:var(--cookie); background:#fff; }
 
 .radio-group { display:flex; flex-direction:column; gap:10px; }
@@ -101,7 +101,6 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <h3 style="color:var(--cookie); font-family:'Lora'">Loading Shop...</h3>
 </div>
 
-<!-- หน้า 1: เลือกระบบ -->
 <div id="selectPage" class="page container active">
   <div class="header">
     <h1 id="uiShopNameMain">Arina Shop</h1>
@@ -110,12 +109,12 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <div id="closedBanner">⛔ ขออภัยค่ะ ตอนนี้ร้านปิดรับออเดอร์ชั่วคราว</div>
   
   <div id="selectModesArea" class="mode-btn-container">
-    <div class="mode-card" onclick="selectMode('cookie')">
+    <div class="mode-card" id="btnModeCookie" onclick="selectMode('cookie')">
       <div class="mode-icon">🍪</div>
       <div class="mode-title">สั่งขนม / คุกกี้</div>
       <div style="font-size:0.9rem; color:var(--mid); margin-top:5px;">Homemade Cookies</div>
     </div>
-    <div class="mode-card" onclick="selectMode('merch')">
+    <div class="mode-card" id="btnModeMerch" onclick="selectMode('merch')">
       <div class="mode-icon">✨</div>
       <div class="mode-title">สั่งสินค้า / เซ็ตสินค้า</div>
       <div style="font-size:0.9rem; color:var(--mid); margin-top:5px;">Pre-order Merchandise</div>
@@ -128,7 +127,6 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   </div>
 </div>
 
-<!-- หน้า 2: เลือกสินค้า -->
 <div id="orderPage" class="page container">
   <button class="btn-secondary btn-small" style="margin-bottom:20px;" onclick="showPage('selectPage')">← ย้อนกลับ</button>
   <div class="header">
@@ -139,7 +137,6 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-primary" onclick="goToShipping()">ถัดไป (กรอกข้อมูลจัดส่ง) ✦</button>
 </div>
 
-<!-- หน้า 3: ข้อมูลจัดส่ง -->
 <div id="shippingPage" class="page container">
   <button class="btn-secondary btn-small" style="margin-bottom:20px;" onclick="showPage('orderPage')">← ย้อนกลับไปเลือกสินค้า</button>
   <div class="header">
@@ -159,6 +156,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
       </div>
     </div>
     <div class="field"><label>ชื่อ-นามสกุล *</label><input type="text" id="fname" placeholder="ชื่อของคุณลูกค้า"></div>
+    <div class="field"><label>อีเมล (Email) *</label><input type="email" id="femail" placeholder="example@email.com"></div>
     <div class="field"><label>เบอร์โทรศัพท์ / LINE ID *</label><input type="text" id="fphone" placeholder="ช่องทางการติดต่อ"></div>
     <div class="field" id="addressFieldContainer">
       <label>ที่อยู่จัดส่ง *</label>
@@ -169,7 +167,6 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-primary" onclick="goToReview()">ตรวจสอบออเดอร์ (Review) ✦</button>
 </div>
 
-<!-- หน้า 4: Review และเลือกวิธีชำระเงิน -->
 <div id="reviewPage" class="page container">
   <div class="header"><h1>Review <em>Order</em></h1></div>
   <div class="r-box">
@@ -200,15 +197,14 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
 
   <div class="r-box" style="margin-bottom:20px;">
     <div class="section-label">Delivery To</div>
-    <div id="reviewContact" style="font-size:1.1rem; font-weight:bold;"></div>
-    <div id="reviewAddress" style="font-size:0.95rem; color:var(--mid); margin-top:5px; line-height:1.5;"></div>
+    <div id="reviewContact" style="font-size:1.1rem; font-weight:bold; margin-bottom:5px;"></div>
+    <div id="reviewAddress" style="font-size:0.95rem; color:var(--mid); line-height:1.5;"></div>
   </div>
 
   <button class="btn btn-primary" id="btnConfirm" onclick="confirmOrder()">ยืนยันและสั่งซื้อ</button>
   <button class="btn btn-secondary" onclick="showPage('shippingPage')">กลับไปแก้ไขข้อมูล</button>
 </div>
 
-<!-- หน้าจ่ายส่วนที่เหลือ (Balance) -->
 <div id="payBalancePage" class="page container">
   <button class="btn-secondary btn-small" style="margin-bottom:20px;" onclick="showPage('selectPage')">← ย้อนกลับ</button>
   <div class="header">
@@ -217,6 +213,7 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   </div>
   <div class="form-section" style="border-color:var(--green);">
     <div class="field"><label>ชื่อ-นามสกุลที่สั่งซื้อ *</label><input type="text" id="bname" placeholder="ชื่อที่ใช้สั่งซื้อออเดอร์"></div>
+    <div class="field"><label>อีเมล (Email) *</label><input type="email" id="bemail" placeholder="example@email.com"></div>
     <div class="field"><label>เบอร์โทรศัพท์ / LINE ID *</label><input type="text" id="bphone" placeholder="ช่องทางการติดต่อ"></div>
     <div class="field"><label>ยอดเงินที่โอนเพิ่ม (฿) *</label><input type="number" id="bamount" placeholder="ยอดเงินส่วนที่เหลือ"></div>
     <div class="field"><label>หมายเหตุ / รหัสออเดอร์ (optional)</label><input type="text" id="bnotes" placeholder="เผื่อแม่ค้าหาง่ายขึ้นค่ะ"></div>
@@ -224,7 +221,6 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-primary" style="background:var(--green);" onclick="submitBalance()">แจ้งโอนเงิน ✦</button>
 </div>
 
-<!-- หน้า 5: Thank You (Eazy Donate) -->
 <div id="thankPage" class="page container" style="text-align:center; padding-top:40px;">
   <div style="font-size:4rem; margin-bottom:10px;">🤎</div>
   <h2 style="font-family:'Lora'; margin-bottom:10px;" id="tyTitle">Order Received!</h2>
@@ -247,7 +243,6 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <button class="btn btn-secondary" onclick="resetAndGoHome()">กลับหน้าแรก</button>
 </div>
 
-<!-- ระบบ Admin -->
 <div id="adminLoginPage" class="page container">
   <div class="admin-login-box">
     <h2 style="font-family: 'Lora';">Admin Access</h2>
@@ -290,7 +285,15 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
   <div id="tabSettings" class="admin-tab-content">
     <div class="form-section">
       <div class="section-label">Shop Settings</div>
-      <div class="field"><label>สถานะร้าน</label><select id="setIsOpen"><option value="true">🟢 เปิดรับออเดอร์</option><option value="false">🔴 ปิดรับออเดอร์</option></select></div>
+      <div class="field"><label>สถานะร้าน (ภาพรวม)</label><select id="setIsOpen"><option value="true">🟢 เปิดร้าน (ออนไลน์)</option><option value="false">🔴 ปิดร้าน (ซ่อนทุกโหมด)</option></select></div>
+      
+      <div class="field"><label>สถานะร้านขนม/คุกกี้ (แยกต่างหาก)</label>
+        <select id="setIsCookieOpen">
+          <option value="true">🟢 เปิดรับออเดอร์ขนม</option>
+          <option value="false">🔴 ปิดรับออเดอร์ขนมชั่วคราว</option>
+        </select>
+      </div>
+      
       <div class="field"><label>ชื่อร้าน</label><input type="text" id="setShopName"></div>
       <div class="field"><label>ข้อความต้อนรับ</label><textarea id="setShopDesc"></textarea></div>
       <div class="field"><label>ค่าจัดส่ง (฿) - ฟรีถ้ารับงาน Vworld</label><input type="number" id="setShippingFee"></div>
@@ -320,7 +323,6 @@ footer a { color:var(--dark); text-decoration:none; cursor:pointer; font-weight:
 
 <script>
 // ════════════════════════════════════════════════════════════
-// ⚠️ ใส่ลิงก์ Web App URL ของคุณเบลล์ที่นี่ค่ะ
 const API_URL = "https://script.google.com/macros/s/AKfycbwuDnms9rcXGIif9yoUMfs45FoVzXr2zG6-QPTPxarKFM2VPpkbXtOOCm7wHcPLfAh_/exec"; 
 const ADMIN_PIN = "admin8616";
 // ════════════════════════════════════════════════════════════
@@ -361,6 +363,19 @@ function applyShopSettings() {
   if (SHOP_SETTINGS.isOpen) {
     document.getElementById('closedBanner').style.display = 'none';
     document.getElementById('selectModesArea').style.display = 'flex';
+    
+    // 🌟 ระบบล็อคปุ่มร้านขนม ถ้าตั้งค่าปิดร้านขนม 🌟
+    const btnCookie = document.getElementById('btnModeCookie');
+    if(SHOP_SETTINGS.isCookieOpen === false) {
+      btnCookie.style.opacity = '0.5';
+      btnCookie.style.pointerEvents = 'none';
+      btnCookie.querySelector('.mode-title').innerHTML = "สั่งขนม / คุกกี้<br><span style='font-size:1rem; color:var(--red);'>(ปิดรับชั่วคราว)</span>";
+    } else {
+      btnCookie.style.opacity = '1';
+      btnCookie.style.pointerEvents = 'auto';
+      btnCookie.querySelector('.mode-title').innerHTML = "สั่งขนม / คุกกี้";
+    }
+    
   } else {
     document.getElementById('closedBanner').style.display = 'block';
     document.getElementById('selectModesArea').style.display = 'none';
@@ -433,15 +448,15 @@ function toggleAddress() {
   }
 }
 
-// 🌟 แก้ไขฟังก์ชัน goToReview เพื่อแก้บั๊ก 🌟
 function goToReview() {
   const name = document.getElementById('fname').value.trim();
   const phone = document.getElementById('fphone').value.trim();
+  const email = document.getElementById('femail').value.trim();
   const notes = document.getElementById('fnotes').value.trim();
   const delivMethod = document.querySelector('input[name="delivMethod"]:checked').value;
   let address = "";
 
-  if (!name || !phone) return alert('กรุณากรอกชื่อและช่องทางการติดต่อให้ครบถ้วนค่ะ');
+  if (!name || !phone || !email) return alert('กรุณากรอกชื่อ, เบอร์โทร และ อีเมล ให้ครบถ้วนค่ะ');
   if (delivMethod === 'shipping') {
     address = document.getElementById('faddress').value.trim();
     if (!address) return alert('กรุณากรอกที่อยู่จัดส่งค่ะ');
@@ -464,7 +479,7 @@ function goToReview() {
   currentOrder = {
     action: "newOrder", orderType: currentMode,
     time: new Date().toLocaleString('th-TH'),
-    name, phone, address: delivMethod === 'shipping' ? `[จัดส่ง] ${address}` : `[รับที่งาน Vworld]`, notes, 
+    name, phone, email, address: delivMethod === 'shipping' ? `[จัดส่ง] ${address}` : `[รับที่งาน Vworld]`, notes, 
     items: itemsForDb, total: grandTotal
   };
 
@@ -476,10 +491,12 @@ function goToReview() {
   
   if(delivMethod === 'shipping') document.getElementById('reviewAddress').innerHTML = "📍 จัดส่งถึงบ้าน:<br>" + address.replace(/\n/g,'<br>');
   else document.getElementById('reviewAddress').innerHTML = "🎪 <b>รับสินค้าด้วยตัวเองที่งาน Vworld</b>";
-  document.getElementById('reviewContact').textContent = `${name} (${phone})`;
+  
+  // โชว์อีเมลในหน้า Review ด้วย
+  document.getElementById('reviewContact').innerHTML = `${name} <br><span style="font-size:0.9rem; font-weight:normal; color:var(--mid);">📞 ${phone} | ✉️ ${email}</span>`;
 
-  updatePaymentMode(); // คำนวณยอดชำระแบบ 100% หรือ 30% และแสดงที่กล่อง
-  showPage('reviewPage'); // สลับไปหน้า Review
+  updatePaymentMode(); 
+  showPage('reviewPage'); 
 }
 
 function updatePaymentMode() {
@@ -523,7 +540,6 @@ function confirmOrder() {
   btn.disabled = true;
   btn.textContent = "กำลังส่งออเดอร์...";
   
-  // แสดงยอดเงินในหน้า Eazy Donate
   document.getElementById('thankYouTotal').textContent = '฿' + currentOrder.paidAmount.toLocaleString();
   document.getElementById('tyTitle').textContent = "Order Received!";
   document.getElementById('tySubtitle').textContent = "ได้รับออเดอร์แล้ว ขอบคุณที่อุดหนุนอารินะนะคะ♥";
@@ -536,12 +552,13 @@ function confirmOrder() {
 function submitBalance() {
   const name = document.getElementById('bname').value.trim();
   const phone = document.getElementById('bphone').value.trim();
+  const email = document.getElementById('bemail').value.trim();
   const amount = Number(document.getElementById('bamount').value) || 0;
   const notes = document.getElementById('bnotes').value.trim();
 
-  if(!name || !phone || amount <= 0) return alert('กรุณากรอกชื่อ เบอร์โทร และยอดเงินที่โอนให้ครบถ้วนค่ะ');
+  if(!name || !phone || !email || amount <= 0) return alert('กรุณากรอกชื่อ, อีเมล, เบอร์โทร และยอดเงินที่โอนให้ครบถ้วนค่ะ');
   
-  const payload = { action: "payBalance", time: new Date().toLocaleString('th-TH'), name, phone, amount, notes };
+  const payload = { action: "payBalance", time: new Date().toLocaleString('th-TH'), name, phone, email, amount, notes };
 
   document.getElementById('thankYouTotal').textContent = '฿' + amount.toLocaleString();
   document.getElementById('tyTitle').textContent = "Payment Noted!";
@@ -554,7 +571,10 @@ function submitBalance() {
 
 function resetAndGoHome() {
   cartCookie = {}; cartMerch = {};
-  ['fname','fphone','faddress','fnotes','bname','bphone','bamount','bnotes'].forEach(id => document.getElementById(id).value = '');
+  ['fname','fphone','femail','faddress','fnotes','bname','bphone','bemail','bamount','bnotes'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.value = '';
+  });
   document.querySelector('input[value="shipping"]').checked = true;
   toggleAddress();
   showPage('selectPage');
@@ -594,6 +614,7 @@ function loadAdminData() {
       renderAdminOrders('cookie'); 
 
       document.getElementById('setIsOpen').value = SHOP_SETTINGS.isOpen ? "true" : "false";
+      document.getElementById('setIsCookieOpen').value = SHOP_SETTINGS.isCookieOpen !== false ? "true" : "false";
       document.getElementById('setShopName').value = SHOP_SETTINGS.shopName;
       document.getElementById('setShopDesc').value = SHOP_SETTINGS.shopDesc;
       document.getElementById('setShippingFee').value = SHOP_SETTINGS.shippingFee || 0;
@@ -622,7 +643,7 @@ function renderAdminOrders(type) {
       <div class="order-card" style="border-color:var(--green);">
         <div class="time">${o.time}</div>
         <div style="font-size:1.2rem; font-weight:bold;">${o.name}</div>
-        <div style="font-size:0.95rem; color:var(--mid); margin-bottom:12px;">📞 ${o.phone}</div>
+        <div style="font-size:0.95rem; color:var(--mid); margin-bottom:12px;">📞 ${o.phone} | ✉️ ${o.email || '-'}</div>
         <div style="font-size:1.2rem; color:var(--green); font-weight:bold;">ยอดโอนเพิ่ม: ฿${Number(o.amount).toLocaleString()}</div>
         ${o.notes ? `<div style="font-size:0.9rem; margin-top:5px;">📝 ${o.notes}</div>` : ''}
       </div>
@@ -652,7 +673,7 @@ function renderAdminOrders(type) {
       <div class="order-card">
         <div class="time">${o.time}</div>
         <div class="name">${o.name}</div>
-        <div class="phone">📞 ${o.phone}</div>
+        <div class="phone" style="font-size:0.9rem; color:var(--mid); margin-bottom:12px;">📞 ${o.phone} | ✉️ ${o.email || '-'}</div>
         <div class="address" style="margin-bottom:12px;">${displayAddress}</div>
         <div class="items">${o.items}</div>
         <div style="font-size:1.1rem; font-weight:bold; margin-top:10px;">Grand Total: ฿${Number(o.total).toLocaleString()}</div>
@@ -771,6 +792,7 @@ function saveAdminSettings() {
 
   const newSettings = {
     isOpen: document.getElementById('setIsOpen').value === "true",
+    isCookieOpen: document.getElementById('setIsCookieOpen').value === "true",
     shopName: document.getElementById('setShopName').value,
     shopDesc: document.getElementById('setShopDesc').value,
     shippingFee: Number(document.getElementById('setShippingFee').value) || 0,
